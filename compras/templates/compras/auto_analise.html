@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Espelho das Sombras: Sua Jornada de Autoanálise</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            color: #e0e0e0;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            overflow-x: hidden;
+        }
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 50px 20px;
+        }
+        .hero {
+            text-align: center;
+            padding: 100px 0;
+            position: relative;
+        }
+        .hero h1 {
+            font-size: 4em;
+            margin: 0;
+            text-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 2s ease-in;
+        }
+        .hero p {
+            font-size: 1.5em;
+            margin-top: 20px;
+            animation: fadeIn 3s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .section {
+            margin: 80px 0;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 1s ease;
+        }
+        .section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .section h2 {
+            font-size: 2.5em;
+            border-bottom: 2px solid #ffffff50;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        .feature {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5px);
+            transition: transform 0.3s ease;
+        }
+        .feature:hover {
+            transform: scale(1.05);
+        }
+        .feature i {
+            font-size: 3em;
+            margin-bottom: 20px;
+            display: block;
+        }
+        .mirror-effect {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        .mirror-effect::before {
+            content: '';
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255,255,255,0.2), transparent);
+            animation: float 10s infinite ease-in-out;
+        }
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(50px, 50px); }
+        }
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.5);
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="mirror-effect"></div>
+    <section class="hero">
+        <div class="container">
+            <h1>🪞 Espelho das Sombras</h1>
+            <p>Uma jornada gamificada de autoanálise: Descubra se o que você vê nos outros é um reflexo de si mesmo.</p>
+        </div>
+    </section>
+
+    <section class="section" id="o-que-temos">
+        <div class="container">
+            <h2>O Que Já Temos: Nossa Fundação Sólida</h2>
+            <div class="feature-grid">
+                <div class="feature">
+                    <i class="fas fa-brain"></i>
+                    <h3>Análise com IA Grok</h3>
+                    <p>Usando a API do xAI, geramos perguntas reflexivas personalizadas e narrativas mitológicas baseadas na sua descrição de situações.</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-gamepad"></i>
+                    <h3>Gamificação Imersiva</h3>
+                    <p>Níveis de insight, pontos, badges e quests no "labirinto psicológico" para tornar a autoanálise divertida e motivadora.</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-cube"></i>
+                    <h3>Visualizações 3D</h3>
+                    <p>Labirintos mentais interativos com Three.js, word clouds e auras emocionais para visualizar suas projeções.</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-volume-up"></i>
+                    <h3>Narrativas em Áudio</h3>
+                    <p>Histórias geradas por IA narradas com TTS, com trilhas sonoras adaptativas para uma experiência sensorial.</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-database"></i>
+                    <h3>Backend Robusto</h3>
+                    <p>Construído em Django com Celery para tarefas assíncronas, autenticação e dashboard pessoal de histórico.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="o-que-esperar">
+        <div class="container">
+            <h2>O Que Você Pode Esperar: O Futuro das Sombras</h2>
+            <div class="feature-grid">
+                <div class="feature">
+                    <i class="fas fa-vr-cardboard"></i>
+                    <h3>Integração AR/VR</h3>
+                    <p>Confronte sombras em realidade aumentada, usando câmeras para overlay de projeções no mundo real.</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-users"></i>
+                    <h3>Comunidade Colaborativa</h3>
+                    <p>Mapa coletivo de projeções anônimas, fóruns para compartilhar insights e sessões em grupo.</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-mobile-alt"></i>
+                    <h3>Apps Mobile</h3>
+                    <p>Versões iOS/Android com notificações proativas para reflexões diárias e integração com wearables para tracking emocional.</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-robot"></i>
+                    <h3>IA Evoluída</h3>
+                    <p>Análises preditivas baseadas em padrões históricos, com integração a terapias virtuais guiadas por Grok.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2025 Espelho das Sombras | Desenvolvido com xAI e Django | Pronto para sua jornada? <a href="#" style="color: #fff;">Entre no Labirinto</a></p>
+    </footer>
+
+    <script>
+        // Animações de scroll para seções
+        const sections = document.querySelectorAll('.section');
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        });
+        sections.forEach(section => observer.observe(section));
+    </script>
+</body>
+</html>

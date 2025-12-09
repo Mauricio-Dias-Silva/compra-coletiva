@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentação da API v2 - VarejoUnido</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        pre { background-color: #1f2937; color: #d1d5db; padding: 1rem; border-radius: 0.5rem; overflow-x: auto; font-family: monospace; font-size: 0.875rem; line-height: 1.6; }
+        code:not(pre code) { background-color: #e5e7eb; padding: 0.125rem 0.25rem; border-radius: 0.25rem; font-size: 0.9em; font-family: monospace; }
+        h2 { margin-top: 2.5rem; margin-bottom: 1.5rem; font-size: 1.875rem; font-weight: 700; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.75rem; color: #111827; }
+        h3 { margin-top: 2rem; margin-bottom: 1rem; font-size: 1.5rem; font-weight: 600; color: #1f2937; }
+        h4 { margin-top: 1.5rem; margin-bottom: 0.75rem; font-size: 1.125rem; font-weight: 600; color: #374151; }
+        .endpoint-card { background-color: white; border: 1px solid #e5e7eb; border-radius: 0.5rem; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1); }
+        .endpoint-method { font-weight: 700; border-radius: 0.25rem; padding: 0.125rem 0.5rem; margin-right: 0.5rem; font-size: 0.9em; display: inline-block; width: 4.5rem; text-align: center; }
+        .get { background-color: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }
+        .post { background-color: #dcfce7; color: #166534; border: 1px solid #86efac; }
+        .put { background-color: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+        .patch { background-color: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+        .access-tag { font-weight: 500; border-radius: 9999px; padding: 0.125rem 0.75rem; font-size: 0.8em; margin-left: 0.5rem; vertical-align: middle; border: 1px solid; }
+        .publico { background-color: #e0e7ff; color: #3730a3; border-color: #a5b4fc; }
+        .usuario { background-color: #ccfbf1; color: #0f766e; border-color: #5eead4; }
+        .vendedor { background-color: #fef9c3; color: #854d0e; border-color: #fde047; }
+        nav a { transition: color 0.2s ease-in-out; }
+        nav a:hover { color: #2563eb; } /* blue-600 */
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+    <div class="max-w-5xl mx-auto p-4 md:p-8 bg-white shadow-lg rounded-lg my-8">
+
+        <h1 class="text-4xl font-bold mb-4 text-gray-900">Documentação da API - VarejoUnido</h1>
+        <p class="mb-8 text-lg text-gray-600">Manual de referência para integração com o aplicativo mobile.</p>
+
+        <!-- Navegação -->
+        <nav class="bg-gray-100 p-4 rounded-md mb-8 sticky top-4 z-10 border border-gray-200">
+            <h3 class="text-lg font-semibold mb-3 text-gray-700">Navegação Rápida</h3>
+            <ul class="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
+                <li><a href="#url-base" class="text-blue-700 font-medium">1. URL Base</a></li>
+                <li><a href="#autenticacao" class="text-blue-700 font-medium">2. Autenticação JWT</a></li>
+                <li><a href="#endpoints" class="text-blue-700 font-medium">3. Endpoints</a></li>
+                <li><a href="#ep-contas" class="text-blue-700 font-medium">&nbsp;&nbsp;&nbsp;3.1 Contas</a></li>
+                <li><a href="#ep-ofertas" class="text-blue-700 font-medium">&nbsp;&nbsp;&nbsp;3.2 Ofertas</a></li>
+                <li><a href="#ep-pedidos" class="text-blue-700 font-medium">&nbsp;&nbsp;&nbsp;3.3 Pedidos</a></li>
+                <li><a href="#ep-painel" class="text-blue-700 font-medium">&nbsp;&nbsp;&nbsp;3.4 Painel Vendedor</a></li>
+                <li><a href="#erros" class="text-blue-700 font-medium">4. Erros Comuns</a></li>
+                <li><a href="#ferramentas" class="text-blue-700 font-medium">5. Ferramentas</a></li>
+            </ul>
+        </nav>
+
+        <!-- Seção 1: URL Base -->
+        <section id="url-base">
+            <h2>1. URL Base</h2>
+             <div class="endpoint-card">
+                <p class="mb-2">A API está acessível através da seguinte URL base durante o desenvolvimento:</p>
+                <pre><code class="text-lg font-semibold">http://192.168.0.244:8000/api/v1/</code></pre>
+                <p class="mt-4 text-sm text-red-700 font-medium">Importante:</p>
+                <ul class="list-disc list-inside text-sm text-gray-600 mt-2 space-y-1">
+                    <li>Django deve rodar com <code>python manage.py runserver 0.0.0.0:8000</code>.</li>
+                    <li>Dispositivo mobile e PC na <strong>mesma rede Wi-Fi</strong>.</li>
+                    <li>Verificar <strong>Firewall</strong> (permitir porta 8000).</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Seção 2: Autenticação -->
+        <section id="autenticacao">
+            <h2>2. Autenticação (JWT)</h2>
+            <p class="mb-4 text-gray-600">O acesso a endpoints protegidos requer um Token JWT no cabeçalho <code>Authorization: Bearer &lt;access_token&gt;</code>.</p>
+            
+            <div class="endpoint-card">
+                <h3 id="auth-obter">2.1 Obter Tokens (Login)</h3>
+                <p><span class="endpoint-method post">POST</span> <code>/token/</code></p>
+                <p class="text-sm text-gray-600 mb-2">Envia credenciais e recebe tokens.</p>
+                <h4>Corpo da Requisição (JSON):</h4>
+                <pre><code>{
+    "username": "email_ou_username_do_usuario",
+    "password": "senha_do_usuario"
+}</code></pre>
+                <h4>Resposta de Sucesso (200 OK):</h4>
+                <pre><code>{
+    "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcxOT...",
+    "access": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzE4..."
+}</code></pre>
+                <p class="mt-2 text-sm text-blue-700 font-medium">Ação no App: Guardar ambos os tokens de forma segura.</p>
+            </div>
+
+             <div class="endpoint-card">
+                <h3 id="auth-atualizar">2.2 Atualizar Access Token</h3>
+                <p class="mb-1">Usar quando o <code>access_token</code> expirar (erro 401).</p>
+                <p><span class="endpoint-method post">POST</span> <code>/token/refresh/</code></p>
+                <h4>Corpo da Requisição (JSON):</h4>
+                <pre><code>{
+    "refresh": "TOKEN_REFRESH_GUARDADO..."
+}</code></pre>
+                <h4>Resposta de Sucesso (200 OK):</h4>
+                <pre><code>{
+    "access": "NOVO_TOKEN_ACCESS_CURTO...",
+    "refresh": "NOVO_TOKEN_REFRESH..." // (Se ROTATE_REFRESH_TOKENS=True)
+}</code></pre>
+                <p class="mt-2 text-sm text-blue-700 font-medium">Ação no App: Atualizar token(s) e tentar a chamada original.</p>
+            </div>
+            
+             <div class="endpoint-card">
+                <h3 id="auth-verificar">2.3 (Opcional) Verificar Token</h3>
+                <p><span class="endpoint-method post">POST</span> <code>/token/verify/</code></p>
+                 <h4>Corpo da Requisição (JSON):</h4>
+                <pre><code>{
+    "token": "TOKEN_ACCESS_OU_REFRESH..."
+}</code></pre>
+                <p class="mt-1"><strong>Resposta:</strong> <code>200 OK</code> se válido, <code>401 Unauthorized</code> se inválido.</p>
+            </div>
+
+            <div class="endpoint-card">
+                <h3 id="auth-logout">2.4 Logout</h3>
+                <p class="mb-1 text-orange-600 font-medium">(Pendente: Criar endpoint no Django que adiciona o refresh token à blacklist)</p>
+                <p><span class="endpoint-method post">POST</span> <code>/token/logout/</code> (URL a ser criada)</p>
+                 <h4>Corpo da Requisição (JSON):</h4>
+                <pre><code>{
+    "refresh": "TOKEN_REFRESH_GUARDADO..."
+}</code></pre>
+                <p class="mt-2 text-sm text-blue-700 font-medium">Ação no App: Remover ambos os tokens.</p>
+            </div>
+        </section>
+
+        <!-- Seção 3: Endpoints -->
+        <section id="endpoints">
+            <h2>3. Endpoints da API</h2>
+            
+            <h3 id="ep-contas">3.1 Contas (<code>/contas/</code>)</h3>
+            <div class="endpoint-card">
+                <p><span class="endpoint-method get">GET</span> <code>/me/</code> <span class="access-tag usuario">Usuário</span></p>
+                <p class="text-sm text-gray-600 mb-2">Retorna os dados do usuário logado.</p>
+                <h4>Exemplo Resposta (200 OK):</h4>
+                <pre><code>{
+    "id": 117,
+    "username": "mauricio",
+    "email": "mauricio@exemplo.com",
+    "first_name": "Mauricio",
+    "last_name": "Silva",
+    "nome_completo": "Mauricio Silva",
+    "vendedor": { // Ou null se não for vendedor
+        "id": 31,
+        "nome_empresa": "Barganha Total Eireli",
+        "logo": "http://192.168.0.244:8000/media/...", // URL completa
+        "descricao": "Empresa especializada em barganha.",
+        "email_contato": "contato@barganhatotal.com",
+        "telefone": "(00) 1234-5678",
+        "endereco": "Travessa dos Sonhos, 20",
+        "status_aprovacao": "aprovado"
+    }
+}</code></pre>
+            </div>
+             <div class="endpoint-card">
+                <p><span class="endpoint-method get">GET</span> <code>/notificacoes/</code> <span class="access-tag usuario">Usuário</span></p>
+                <p class="text-sm text-gray-600 mb-2">Lista as notificações do usuário logado.</p>
+                 <h4>Exemplo Resposta (200 OK):</h4>
+                <pre><code>[
+    {
+        "id": 5,
+        "data_criacao": "2025-10-28T12:00:00Z",
+        "lida": false,
+        "titulo": "Seu cupom está disponível!",
+        "mensagem": "O lote da oferta 'XPTO' foi concretizado. Seu cupom é ABC123XYZ.",
+        "tipo": "cupom",
+        "url_destino": "/meus-cupons/5/" // Exemplo de URL relativa (app pode precisar montar a URL completa)
+    },
+    {
+        "id": 4,
+        "data_criacao": "2025-10-27T10:00:00Z",
+        "lida": true,
+        "titulo": "Bem-vindo ao VarejoUnido!",
+        "mensagem": "Seu cadastro foi concluído com sucesso.",
+        "tipo": "sistema",
+        "url_destino": null
+    }
+]</code></pre>
+            </div>
+            <!-- GET /notificacoes/{id}/ omitido por simplicidade -->
+
+            <h3 id="ep-ofertas">3.2 Ofertas (<code>/ofertas/</code>)</h3>
+            <div class="endpoint-card">
+                <p><span class="endpoint-method get">GET</span> <code>/</code> <span class="access-tag publico">Público</span></p>
+                <p class="text-sm text-gray-600 mb-2">Lista ofertas ativas.</p>
+                 <h4>Parâmetros de Query (Opcionais):</h4>
+                 <ul class="list-disc list-inside text-sm text-gray-600 mb-2">
+                     <li><code>search=...</code> (Busca no título, descrição, nome do vendedor)</li>
+                     <li><code>categoria__slug=...</code> (Filtra por slug da categoria)</li>
+                     <li><code>tipo_oferta=lote</code> ou <code>tipo_oferta=unidade</code></li>
+                     <li><code>ordering=...</code> (Opções: <code>preco_desconto</code>, <code>-preco_desconto</code>, <code>data_inicio</code>, <code>-data_inicio</code>)</li>
+                 </ul>
+                 <h4>Exemplo Resposta (200 OK):</h4>
+                 <pre><code>[ // Lista de objetos OfertaListSerializer
+    {
+        "id": 154,
+        "titulo": "Evolve dynamic solutions em Lote - Exclusivo",
+        "slug": "evolve-dynamic-solutions-em-lote-exclusivo-18",
+        "imagem_principal": "http://192.168.0.244:8000/media/ofertas/imagens/Oferta_18_5VHDA0X.jpg",
+        "preco_original": "1925.49",
+        "preco_desconto": "979.49",
+        "percentual_desconto": "49%",
+        "tipo_oferta": "lote",
+        "data_inicio": "2025-07-30T13:49:11.975815-03:00",
+        "data_termino": "2025-07-30T14:06:11.975817-03:00",
+        "status": "ativa",
+        "quantidade_vendida": 0,
+        "quantidade_minima_ativacao": 12,
+        "vendedor": { // Objeto VendedorSerializer
+            "id": 31,
+            "nome_empresa": "Barganha Total Eireli",
+            "logo": null, // URL completa ou null
+            "descricao": "Empresa especializada em barganha.",
+             "email_contato": "...", "telefone": "...", "endereco": "...", "status_aprovacao": "aprovado"
+        },
+        "categoria": { // Objeto CategoriaSerializer ou null
+            "id": 1,
+            "nome": "Eletrônicos",
+            "slug": "eletronicos",
+            "descricao": null, "ativa": true
+        },
+        "media_avaliacoes": 4.5 // Média das notas (float) ou null
+    },
+    // ... outras ofertas ...
+]</code></pre>
+            </div>
+             <div class="endpoint-card">
+                <p><span class="endpoint-method get">GET</span> <code>/{id_ou_slug}/</code> <span class="access-tag publico">Público</span></p>
+                <p class="text-sm text-gray-600 mb-2">Detalhes de uma oferta.</p>
+                 <h4>Exemplo Resposta (200 OK):</h4>
+                 <pre><code>{ // Objeto OfertaDetailSerializer (igual ao List + campos abaixo)
+    "id": 154,
+    "titulo": "...", 
+    // ... todos os campos do OfertaListSerializer ...
+    "descricao_detalhada": "Descrição completa da oferta aqui...",
+    "quantidade_maxima_cupons": 100, // Ou null se não houver limite
+    "avaliacoes": [ // Lista de objetos AvaliacaoSerializer
+        {
+            "id": 10,
+            "usuario": { // Objeto UserSerializer simplificado (ou null se anônimo)
+                 "id": 117, "username": "mauricio", "nome_completo": "Mauricio Silva" 
+            },
+            "nota": 5,
+            "comentario": "Excelente produto, recomendo!",
+            "data_avaliacao": "2025-10-28T10:00:00Z"
+        },
+        // ... outras avaliações ...
+    ]
+}</code></pre>
+            </div>
+            <!-- Categorias, Vendedores, Banners são listas simples, omitidos exemplos detalhados -->
+             <div class="endpoint-card">
+                <p><span class="endpoint-method get">GET</span> <code>/categorias/</code> <span class="access-tag publico">Público</span> - Lista de Categorias</p>
+                <p><span class="endpoint-method get">GET</span> <code>/vendedores/</code> <span class="access-tag publico">Público</span> - Lista Vendedores Aprovados</p>
+                <p><span class="endpoint-method get">GET</span> <code>/banners/</code> <span class="access-tag publico">Público</span> - Lista Banners Ativos</p>
+            </div>
+
+            <h3 id="ep-pedidos">3.3 Pedidos Coletivos (<code>/pedidos/</code>)</h3>
+            <div class="endpoint-card">
+                <p><span class="endpoint-method get">GET</span> <code>/</code> <span class="access-tag usuario">Usuário</span></p>
+                <p class="text-sm text-gray-600 mb-2">Lista os pedidos coletivos do usuário.</p>
+                 <h4>Exemplo Resposta (200 OK):</h4>
+                <pre><code>[ // Lista de PedidoColetivoListSerializer
+    {
+        "id": 12,
+        "oferta": { // Objeto OfertaListSerializer simplificado
+             "id": 154, "titulo": "...", "slug": "...", "imagem_principal": "...", "preco_desconto": "979.49", ... 
+        },
+        "usuario": { // Objeto UserSerializer simplificado
+             "id": 117, "username": "mauricio", "nome_completo": "Mauricio Silva" 
+        },
+        "quantidade": 1,
+        "valor_total": "979.49",
+        "data_pedido": "2025-10-28T11:00:00Z",
+        "status_pagamento": "aprovado_mp", // pendente, aprovado_mp, etc.
+        "status_lote": "concretizado", // aberto, concretizado, falha
+        "cupom_coletivo": { // Objeto CupomSerializer ou null se não gerado/aplicável
+            "id": 25,
+            "codigo": "XYZ789LMN",
+            "status": "disponivel", // disponivel, resgatado, expirado
+            "valido_ate": "2025-11-30T23:59:59Z",
+            "data_criacao": "2025-10-28T12:00:00Z",
+            "data_resgate": null,
+            // Oferta, Usuario, Compra (null), PedidoID já estão nos níveis acima
+        }
+    },
+    // ... outros pedidos ...
+]</code></pre>
+            </div>
+             <div class="endpoint-card">
+                <p><span class="endpoint-method post">POST</span> <code>/</code> <span class="access-tag usuario">Usuário</span></p>
+                <p class="text-sm text-gray-600 mb-1">Cria um novo pedido coletivo.</p>
+                <h4>Corpo da Requisição (JSON):</h4>
+                <pre><code>{
+    "oferta_id": 154,          // ID da Oferta (OBRIGATÓRIO, tipo 'lote')
+    "quantidade": 1,         // Quantidade (OBRIGATÓRIO, >= 1)
+    "usar_credito": true     // true ou false (OPCIONAL, default false)
+}</code></pre>
+                <h4>Exemplo Resposta Sucesso (201 Created - Pagamento Pendente):</h4>
+                <pre><code>{ // Objeto PedidoColetivoDetailSerializer
+    "id": 13,
+    "oferta": { ... },
+    "usuario": { ... },
+    "quantidade": 1,
+    "valor_total": "979.49",
+    "data_pedido": "2025-10-28T13:00:00Z",
+    "status_pagamento": "pendente", 
+    "status_lote": "aberto",
+    "cupom_coletivo": null,
+    "payment_url": "https://mercadopago.com/pagar/simulado" // URL para abrir na WebView
+}</code></pre>
+                <h4>Exemplo Resposta Sucesso (201 Created - Pago com Crédito):</h4>
+                 <pre><code>{ // Objeto PedidoColetivoDetailSerializer
+    "id": 14,
+    "oferta": { ... },
+    "usuario": { ... },
+    "quantidade": 1,
+    "valor_total": "50.00",
+    "data_pedido": "2025-10-28T14:00:00Z",
+    "status_pagamento": "aprovado_mp", // Já aprovado
+    "status_lote": "aberto",
+    "cupom_coletivo": null
+    // Sem "payment_url"
+}</code></pre>
+            </div>
+             <div class="endpoint-card">
+                <p><span class="endpoint-method get">GET</span> <code>/{id}/</code> <span class="access-tag usuario">Usuário</span> - Detalhes do Pedido</p>
+                <p><span class="endpoint-method get">GET</span> <code>/meu-credito/</code> <span class="access-tag usuario">Usuário</span> - Saldo de Crédito</p>
+                <p><span class="endpoint-method get">GET</span> <code>/meu-historico-credito/</code> <span class="access-tag usuario">Usuário</span> - Histórico de Crédito</p>
+            </div>
+
+            <h3 id="ep-painel">3.4 Painel do Vendedor (<code>/painel/</code>)</h3>
+             <div class="endpoint-card">
+                 <p class="text-sm font-semibold text-orange-700 mb-2">Acesso Geral: <span class="access-tag vendedor">Vendedor Aprovado</span></p>
+                <p><span class="endpoint-method get">GET</span> <code>/dashboard/</code> - Estatísticas</p>
+                <p><span class="endpoint-method get">GET</span> <code>/minhas-ofertas/</code> - Listar ofertas do vendedor</p>
+                <p><span class="endpoint-method post">POST</span> <code>/minhas-ofertas/</code> - Criar oferta</p>
+                <p><span class="endpoint-method get">GET</span>/<span class="endpoint-method put">PUT</span>/<span class="endpoint-method patch">PATCH</span> <code>/minhas-ofertas/{id}/</code> - Ver/Editar oferta</p>
+                <p><span class="endpoint-method get">GET</span> <code>/cupons/</code> - Listar cupons vendidos (Filtros: <code>?status=...</code>, <code>?q=...</code>)</p>
+                <p><span class="endpoint-method post">POST</span> <code>/cupons/resgatar_cupom_por_codigo/</code> - Resgatar cupom</p>
+                 <p class="text-xs text-gray-500 mt-2">Exemplos de JSON para estes endpoints podem ser inferidos dos outros endpoints (usando os mesmos serializers).</p>
+            </div>
+        </section>
+
+        <!-- Seção 4: Erros -->
+        <section id="erros">
+            <h2>4. Respostas de Erro Comuns</h2>
+             <div class="endpoint-card">
+                <ul class="list-disc list-inside text-gray-600 space-y-2">
+                    <li><strong><code>400 Bad Request</code></strong>: Dados inválidos enviados na requisição (ex: campo faltando, formato incorreto). A resposta geralmente contém detalhes sobre os campos com erro.
+                        <pre class="text-sm mt-1"><code>{ "campo_com_erro": ["Esta campo é obrigatório."] }</code></pre>
+                    </li>
+                    <li><strong><code>401 Unauthorized</code></strong>: Token JWT ausente, inválido ou expirado.
+                         <pre class="text-sm mt-1"><code>{ "detail": "Authentication credentials were not provided." }</code></pre>
+                         <pre class="text-sm mt-1"><code>{ "detail": "Given token not valid for any token type", "code": "token_not_valid" }</code></pre>
+                         <p class="text-xs text-blue-700 font-medium">Ação no App: Usar o refresh token para obter um novo access token.</p>
+                    </li>
+                     <li><strong><code>403 Forbidden</code></strong>: Usuário autenticado, mas não tem permissão para acessar o recurso (ex: usuário normal tentando acessar o painel do vendedor).
+                         <pre class="text-sm mt-1"><code>{ "detail": "You do not have permission to perform this action." }</code></pre>
+                         <pre class="text-sm mt-1"><code>{ "detail": "Você não está associado a uma conta de vendedor aprovado." }</code></pre>
+                    </li>
+                    <li><strong><code>404 Not Found</code></strong>: O recurso solicitado (ex: oferta com ID específico) não existe.
+                         <pre class="text-sm mt-1"><code>{ "detail": "Not found." }</code></pre>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Seção 5: Ferramentas -->
+        <section id="ferramentas">
+            <h2>5. Ferramentas Úteis</h2>
+             <div class="endpoint-card">
+                <ul class="list-disc list-inside text-gray-600 space-y-1">
+                    <li><strong>Postman / Insomnia:</strong> Para testar chamadas POST/PUT/PATCH e ver cabeçalhos.</li>
+                    <li><strong>Browsable API:</strong> Acessar URLs GET no navegador (logado no <code>/admin/</code>) para ver respostas JSON.</li>
+                </ul>
+            </div>
+        </section>
+
+        <footer class="mt-12 text-center text-sm text-gray-500 border-t border-gray-200 pt-4">
+            Documentação da API VarejoUnido - Última atualização: 28 de Outubro de 2025
+        </footer>
+    </div>
+</body>
+</html>
