@@ -1,4 +1,4 @@
-FROM python:3.11-slim
+FROM python:3.11-slim-bookworm
 
 # Configurações de ambiente
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -37,8 +37,8 @@ COPY . .
 RUN WSGI_MODULE="" && \
     WSGI_FILE=$(find . -maxdepth 2 -name "wsgi.py" -not -path "./venv/*" -not -path "./.venv/*" | head -1) && \
     if [ -n "$WSGI_FILE" ]; then \
-        WSGI_DIR=$(dirname "$WSGI_FILE" | sed 's|^\./||' | tr '/' '.'); \
-        WSGI_MODULE="${WSGI_DIR}.wsgi:application"; \
+    WSGI_DIR=$(dirname "$WSGI_FILE" | sed 's|^\./||' | tr '/' '.'); \
+    WSGI_MODULE="${WSGI_DIR}.wsgi:application"; \
     fi && \
     if [ -z "$WSGI_MODULE" ]; then WSGI_MODULE="config.wsgi:application"; fi && \
     echo "export WSGI_MODULE=$WSGI_MODULE" > /app/.wsgi_config && \
