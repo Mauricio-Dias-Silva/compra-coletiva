@@ -1,53 +1,37 @@
-FROM python:3.11-slim-bookworm
+# Dockerfile
 
-# Configurações de ambiente
-ENV PYTHONDONTWRITEBYTECODE=1
+# Use Python 3.11 slim as base
+FROM python:3.11-slim
+
+# Install system dependencies
+# libpq-dev is for PostgreSQL
+# build-essential is for compiling some python packages
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set environment variables
 ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+
+# Set work directory
 WORKDIR /app
 
-# Instala dependências de sistema para libs Python nativas
-# (WeasyPrint, Pillow, psycopg2, cairo, pango, OpenCV, XML, etc)
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
-    python3-dev \
-    libpq-dev \
-    libpango-1.0-0 \
-    libharfbuzz0b \
-    libpangoft2-1.0-0 \
-    libpangocairo-1.0-0 \
-    libgdk-pixbuf2.0-0 \
-    libffi-dev \
-    libjpeg-dev \
-    zlib1g-dev \
-    libgl1 \
-    libglib2.0-0 \
-    libxml2-dev \
-    libxslt-dev \
-    shared-mime-info \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
+# Copy requirements first to leverage Docker cache
+COPY requirements.txt /app/
 
-# Instalação de dependências Python
-COPY requirements.txt .
+# Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copia o código
-COPY . .
+# Copy the rest of the application
+COPY . /app/
 
-# Detectar módulo WSGI automaticamente (busca wsgi.py em qualquer pasta)
-RUN WSGI_MODULE="" && \
-    WSGI_FILE=$(find . -maxdepth 2 -name "wsgi.py" -not -path "./venv/*" -not -path "./.venv/*" | head -1) && \
-    if [ -n "$WSGI_FILE" ]; then \
-    WSGI_DIR=$(dirname "$WSGI_FILE" | sed 's|^\./||' | tr '/' '.'); \
-    WSGI_MODULE="${WSGI_DIR}.wsgi:application"; \
-    fi && \
-    if [ -z "$WSGI_MODULE" ]; then WSGI_MODULE="config.wsgi:application"; fi && \
-    echo "export WSGI_MODULE=$WSGI_MODULE" > /app/.wsgi_config && \
-    echo "[PYTHONJET] WSGI detectado: $WSGI_MODULE"
+# Collect static files
+# This will put static files in the directory configured in STATIC_ROOT (e.g., /app/staticfiles)
+# We set SECRET_KEY to a dummy value because it's required for collectstatic but not used for serving
+RUN python manage.py collectstatic --noinput
 
-# Coleta de estáticos
-RUN python manage.py collectstatic --noinput 2>/dev/null || true
-
-# Configuração de porta e execução
-ENV PORT=8080
-EXPOSE 8080
-CMD . /app/.wsgi_config && exec gunicorn $WSGI_MODULE --bind 0.0.0.0:${PORT:-8080} --timeout 0
+# Define the command to run the application using Gunicorn
+# Cloud Run expects the app to listen on the port defined by the PORT environment variable
+CMD exec gunicorn projeto_compra_coletiva.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --threads 8 --timeout 0

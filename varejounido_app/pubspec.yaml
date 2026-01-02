@@ -1,0 +1,55 @@
+name: varejounido_app
+description: App Flutter para VarejoUnido - Compras Coletivas
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # UI/Icons
+  cupertino_icons: ^1.0.6
+  google_fonts: ^6.1.0
+  
+  # Gerenciamento de Estado
+  provider: ^6.1.1
+  
+  # HTTP e API
+  http: ^1.1.2
+  dio: ^5.4.0
+  
+  # Autenticação JWT
+  flutter_secure_storage: ^9.0.0
+  jwt_decoder: ^2.0.1
+  
+  # Câmera e Imagem
+  camera: ^0.10.5+7
+  image_picker: ^1.0.7
+  image: ^4.1.4
+  
+  # Formulários
+  flutter_form_builder: ^9.2.1
+  form_builder_validators: ^9.1.0
+  
+  # Utilitários
+  intl: ^0.18.1
+  cached_network_image: ^3.3.1
+  shimmer: ^3.0.0
+  flutter_dotenv: ^5.1.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.1
+
+flutter:
+  uses-material-design: true
+  
+  assets:
+    - assets/images/
+    - .env

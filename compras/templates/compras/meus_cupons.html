@@ -20,7 +20,7 @@
                                 Preço Pago: <strong>R$ {{ cupom.compra.valor_total|floatformat:2 }}</strong>
                             </p>
                             <p class="card-text"><strong>Código do Cupom:</strong> <span class="badge bg-info text-dark fs-6">{{ cupom.codigo }}</span></p>
-                            <p class="card-text"><strong>Gerado em:</strong> {{ cupom.data_geracao|date:"d/m/Y H:i" }}</p>
+                            <p class="card-text"><strong>Gerado em:</strong> {{ cupom.data_criacao|date:"d/m/Y H:i" }}</p>
                             <p class="card-text"><strong>Válido até:</strong> {{ cupom.valido_ate|date:"d/m/Y H:i" }}</p>
                             
                             <p class="card-text"><strong>Status:</strong> 

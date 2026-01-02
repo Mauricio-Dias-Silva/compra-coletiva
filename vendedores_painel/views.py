@@ -7,6 +7,7 @@ from django.utils.text import slugify
 from django.db import transaction
 from django.utils import timezone
 from django.db.models import Q, Sum, Count
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 # Importe modelos e formulários dos apps relacionados
 from ofertas.models import Oferta, Vendedor
@@ -200,7 +201,6 @@ def resgatar_cupom(request, cupom_id):
         if cupom.status == 'disponivel':
             cupom.status = 'resgatado'
             cupom.data_resgate = timezone.now()
-            cupom.resgatado_por = request.user
             cupom.save()
             messages.success(request, f'Cupom "{cupom.codigo}" resgatado com sucesso!')
         else:

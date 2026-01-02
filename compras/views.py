@@ -133,7 +133,7 @@ def meus_cupons(request):
     Visualização para listar todos os cupons comprados pelo usuário logado.
     """
     # Busca todos os cupons do usuário atual, ordenados pelo mais recente
-    cupons = Cupom.objects.filter(usuario=request.user).order_by('-data_geracao')
+    cupons = Cupom.objects.filter(usuario=request.user).order_by('-data_criacao')
 
     contexto = {
         'cupons': cupons,
