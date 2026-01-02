@@ -14,6 +14,9 @@ RUN apt-get update && apt-get install -y \
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
+# [PYTHONJET] Configuração segura para build
+ENV SECRET_KEY=temporary-build-key-for-collectstatic
+ENV DATABASE_URL=sqlite://:memory:
 
 # Set work directory
 WORKDIR /app
