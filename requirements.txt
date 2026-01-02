@@ -1,6 +1,6 @@
 ﻿﻿# --- Core Django & Config ---
-Django==5.2.4
-python-decouple==4.0.0        # Substitui o decouple para alinhar com o settings
+Django==5.1.4
+python-decouple==3.8        # Substitui o decouple para alinhar com o settings
 gunicorn==23.0.0        # Servidor Web
 # --- API Rest (Nomes Corrigidos) ---
 djangorestframework
