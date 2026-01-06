@@ -35,6 +35,9 @@ COPY . /app/
 # We set SECRET_KEY to a dummy value because it's required for collectstatic but not used for serving
 RUN python manage.py collectstatic --noinput
 
-# Define the command to run the application using Gunicorn
-# Cloud Run expects the app to listen on the port defined by the PORT environment variable
-CMD exec gunicorn projeto_compra_coletiva.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --threads 8 --timeout 0
+# Copy entrypoint script
+COPY entrypoint.sh /app/
+RUN chmod +x /app/entrypoint.sh
+
+# Run entrypoint
+CMD ["/app/entrypoint.sh"]
