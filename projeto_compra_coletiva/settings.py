@@ -63,6 +63,8 @@ INSTALLED_APPS = [
     'vendedores_painel',
     'pagamentos',
     'pedidos_coletivos',
+    'fiscal', # Módulo Fiscal (NFe/NFS-e)
+    'comunicacao', # Módulo de E-mails e Notificações
 ]
 
 MIDDLEWARE = [

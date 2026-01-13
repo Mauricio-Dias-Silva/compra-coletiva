@@ -73,6 +73,14 @@ def iniciar_pagamento_mp(request, model_name, entity_id):
         "external_reference": f"{model_name.lower()}_{entidade_pagamento.id}", 
         "notification_url": notification_url, 
         "auto_return": "all", 
+        "auto_return": "all",
+        "payment_methods": {
+            "excluded_payment_types": [
+                {"id": "ticket"}, # Remove Boleto (Lento)
+                {"id": "atm"},    # Remove Lotérica (Lento)
+            ],
+            "installments": 12 # Permite até 12x
+        },
         "back_urls": {
             "success": success_url,
             "pending": pending_url,
@@ -166,20 +174,57 @@ def notificacao_pagamento_mp(request):
                                                             descricao=f"Bônus por indicação: Compra de {entidade_pagamento.usuario.username}"
                                                         )
                                                         logger.info(f"REFERRAL: Creditado R$ {reward} para {referrer.username}")
+                                                        
+                                                        # Notificar pro e-mail
+                                                        try:
+                                                            from comunicacao.services import EmailService
+                                                            EmailService.enviar_aviso_indicacao(referrer, reward, entidade_pagamento.usuario.username)
+                                                        except Exception as e:
+                                                            logger.error(f"EMAIL REFERRAL ERROR: {e}")
                                                 # ======================================
 
-                                            logger.info(f"Compra {entidade_pagamento.id} por unidade: APROVADA. Cupom gerado/verificado.")
+                                                logger.info(f"Compra {entidade_pagamento.id} por unidade: APROVADA. Cupom gerado/verificado.")
 
-                                    elif isinstance(entidade_pagamento, PedidoColetivo): 
-                                        if entidade_pagamento.status_pagamento != 'aprovado_mp':
-                                            entidade_pagamento.status_pagamento = 'aprovado_mp' 
-                                            entidade_pagamento.id_transacao_mp = resource_id
-                                            entidade_pagamento.metodo_pagamento = payment_info["response"]["payment_type_id"]
-                                            entidade_pagamento.save()
-                                            
-                                            oferta.quantidade_vendida += entidade_pagamento.quantidade
-                                            oferta.save() 
-                                            logger.info(f"Pedido Coletivo {entidade_pagamento.id}: APROVADO NO MP (aguardando lote). Qtd oferta atualizada.")
+                                                # === NOTIFICAÇÃO POR EMAIL ===
+                                                try:
+                                                    from comunicacao.services import EmailService
+                                                    EmailService.enviar_confirmacao_pedido(entidade_pagamento.usuario, entidade_pagamento, tipo="compra")
+                                                except Exception as e:
+                                                    logger.error(f"EMAIL ERROR: {e}")
+                                                # ==============================
+
+                                                # === AUTOMAÇÃO FISCAL (NFe) ===
+                                                # ... (código existente da NFe) ...
+                                                try:
+                                                    from fiscal.models import NotaFiscal
+                                                    from fiscal.services import FiscalService
+                                                    if not hasattr(entidade_pagamento, 'nota_fiscal'):
+                                                        nf_obj = NotaFiscal.objects.create(compra=entidade_pagamento, status='pendente')
+                                                        FiscalService().emitir_nfe(nf_obj)
+                                                        logger.info(f"NFe AUTO: Disparada para Compra {entidade_pagamento.id}")
+                                                except Exception as e:
+                                                    logger.error(f"NFe AUTO FALHA: {e}")
+                                                # ==============================
+
+                                            elif isinstance(entidade_pagamento, PedidoColetivo): 
+                                                if entidade_pagamento.status_pagamento != 'aprovado_mp':
+                                                    # ... (lógica existente de atualização) ...
+                                                    entidade_pagamento.status_pagamento = 'aprovado_mp' 
+                                                    entidade_pagamento.id_transacao_mp = resource_id
+                                                    entidade_pagamento.metodo_pagamento = payment_info["response"]["payment_type_id"]
+                                                    entidade_pagamento.save()
+                                                    
+                                                    oferta.quantidade_vendida += entidade_pagamento.quantidade
+                                                    oferta.save() 
+                                                    logger.info(f"Pedido Coletivo {entidade_pagamento.id}: APROVADO NO MP.")
+
+                                                    # === NOTIFICAÇÃO POR EMAIL (Pedido Coletivo) ===
+                                                    try:
+                                                        from comunicacao.services import EmailService
+                                                        EmailService.enviar_confirmacao_pedido(entidade_pagamento.usuario, entidade_pagamento, tipo="pedido coletivo")
+                                                    except Exception as e:
+                                                        logger.error(f"EMAIL ERROR: {e}")
+                                                    # ==============================
 
                                 elif payment_status == 'pending':
                                     entidade_pagamento.status_pagamento = 'pendente' 
