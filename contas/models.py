@@ -46,6 +46,19 @@ class Usuario(AbstractUser):
     @property
     def eh_vendedor_ou_associado(self):
         return self.vendedor is not None and self.vendedor.status_aprovacao == 'aprovado'
+    
+    # === SISTEMA DE INDICAÇÃO (GAMIFICAÇÃO) ===
+    codigo_indicacao = models.CharField(max_length=20, unique=True, blank=True, null=True, verbose_name="Código de Indicação")
+    indicado_por = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='indicados', verbose_name="Indicado Por")
+
+    def save(self, *args, **kwargs):
+        if not self.codigo_indicacao:
+            import uuid
+            # Gera código curto único (ex: MAU-A1B2)
+            prefix = self.username[:3].upper()
+            suffix = str(uuid.uuid4())[:4].upper()
+            self.codigo_indicacao = f"{prefix}-{suffix}"
+        super().save(*args, **kwargs)
 
 
 class Notificacao(models.Model):

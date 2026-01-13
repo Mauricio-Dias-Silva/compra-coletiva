@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo_pagina %}Checkout - {{ oferta.titulo }}{% endblock titulo_pagina %}
+
+{% block conteudo %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white">
+                    <h3>🛒 Resumo do Pedido</h3>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-4">
+                        {% if oferta.imagem_principal %}
+                        <img src="{{ oferta.imagem_principal.url }}" class="img-thumbnail me-3"
+                            style="width: 100px; height: 100px; object-fit: cover;">
+                        {% endif %}
+                        <div>
+                            <h4>{{ oferta.titulo }}</h4>
+                            <span class="badge bg-info">{{ oferta.get_tipo_oferta_display }}</span>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <form method="POST" action="">
+                        {% csrf_token %}
+                        <div class="row mb-3">
+                            <div class="col-6">Preço Unitário:</div>
+                            <div class="col-6 text-end"><strong>R$ {{ oferta.preco_desconto|floatformat:2 }}</strong>
+                            </div>
+                        </div>
+
+                        <!-- Lógica de Cupom -->
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" name="cupom"
+                                placeholder="Código Promocional (Opcional)" value="{{ cupom_aplicado|default:'' }}">
+                            <button class="btn btn-outline-secondary" type="submit" name="aplicar_cupom"
+                                value="1">Aplicar</button>
+                        </div>
+
+                        {% if cupom_msg %}
+                        <div class="alert alert-{{ cupom_status }}">{{ cupom_msg }}</div>
+                        {% endif %}
+
+                        <hr>
+                        <div class="row fs-4">
+                            <div class="col-6">Total a Pagar:</div>
+                            <div class="col-6 text-end text-success">
+                                <strong>R$ {{ valor_final|floatformat:2 }}</strong>
+                                {% if desconto > 0 %}
+                                <br><small class="text-muted fs-6">(Desconto: -R$ {{ desconto|floatformat:2 }})</small>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 mt-4">
+                            <!-- Botão Finalizar -->
+                            <button type="submit" name="finalizar" value="1" class="btn btn-success btn-lg">
+                                Pagar com Mercado Pago <i class="bi bi-credit-card"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

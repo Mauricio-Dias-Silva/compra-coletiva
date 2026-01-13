@@ -219,12 +219,88 @@ def buscar_cupom_para_resgate(request):
     if request.method == 'POST':
         codigo = request.POST.get('codigo_cupom')
         if codigo:
-            cupom = get_object_or_404(Cupom, codigo=codigo, oferta__vendedor=request.user.vendedor)
-            return redirect('vendedores_painel:resgatar_cupom', cupom_id=cupom.id)
-        else:
-            messages.error(request, 'Por favor, insira um código de cupom.')
+            # Tenta achar cupom exato
+            cupom = Cupom.objects.filter(codigo=codigo, oferta__vendedor=request.user.vendedor).first()
+            if cupom:
+                return redirect('vendedores_painel:resgatar_cupom', cupom_id=cupom.id)
+            else:
+                messages.error(request, 'Cupom não encontrado ou não pertence a este vendedor.')
     
     contexto = {
         'titulo_pagina': 'Buscar Cupom para Resgate'
     }
     return render(request, 'vendedores_painel/buscar_cupom.html', contexto)
+
+
+@vendedor_required
+def nova_oferta_ia(request):
+    """
+    Permite ao vendedor tirar uma foto e criar uma oferta automaticamente via IA.
+    """
+    from django import forms
+    from ofertas.services.ai_scanner import AIScannerService
+    import os
+
+    class IAUploadForm(forms.Form):
+        foto = forms.ImageField(label="Foto do Produto/Prateleira")
+        margem = forms.DecimalField(initial=20.0, label="Margem de Lucro (%)", help_text="Quanto você quer ganhar sobre o preço da prateleira?")
+        tipo_entrega = forms.ChoiceField(choices=Oferta.TIPO_ENTREGA_CHOICES, initial='retirada', label="Entrega")
+        valor_frete = forms.DecimalField(initial=0.00, required=False, label="Valor do Frete (se houver)")
+
+    if request.method == "POST":
+        form = IAUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            foto = form.cleaned_data['foto']
+            margem = float(form.cleaned_data['margem'])
+            tipo_entrega = form.cleaned_data['tipo_entrega']
+            valor_frete = form.cleaned_data['valor_frete'] or 0.00
+
+            # Salvar Temporário
+            temp_path = f"temp_seller_{request.user.id}_{foto.name}"
+            with open(temp_path, 'wb+') as destination:
+                for chunk in foto.chunks():
+                    destination.write(chunk)
+            
+            try:
+                # SCANNER IA
+                scanner = AIScannerService()
+                products = scanner.scan_flyer(temp_path, margin_percent=margem)
+                
+                if not products:
+                    messages.warning(request, "A IA não conseguiu identificar produtos na imagem. Tente uma foto mais clara.")
+                else:
+                    count = 0
+                    for p in products:
+                        # Criação Automática
+                        Oferta.objects.create(
+                            titulo=p.get('suggested_title') or p.get('name'),
+                            descricao_detalhada=f"Oferta Rápida (Smart Seller).\nItem: {p['name']}\nBox/Meta: {p['min_qty']}",
+                            preco_original=p['selling_price'] * 1.3,
+                            preco_desconto=p['selling_price'],
+                            vendedor=request.user.vendedor,
+                            categoria=None, # Categoria nula, requer ajuste depois ou IA guess? (Deixar null por enquanto)
+                            tipo_oferta='lote', # Default para compra coletiva rápida
+                            quantidade_minima_ativacao=p['min_qty'],
+                            status='ativa', # AUTO PUBLISH para agilidade? Ou 'pendente'? User pediu agilidade ("tempo curto"). Vamos por ATIVA mas não publicada? Ou Publicada?
+                            # O User disse: "se a pessoas colocar o tempo curto... ela ja faz a venda". 
+                            # Vamos colocar status='ativa' e publicada=True para ser "Uber" style (Instantâneo).
+                            status_pagamento='pendente', # Ops, status da oferta
+                            publicada=True, # INSTANT PUBLISH
+                            data_termino=timezone.now() + timezone.timedelta(hours=24), # Default 24h
+                            tipo_entrega=tipo_entrega,
+                            valor_frete=valor_frete
+                        )
+                        count += 1
+                    
+                    messages.success(request, f"🚀 Sucesso! {count} ofertas criadas e JÁ ESTÃO NO AR!")
+                    return redirect('vendedores_painel:dashboard')
+
+            except Exception as e:
+                messages.error(request, f"Erro no processamento da IA: {e}")
+            finally:
+                if os.path.exists(temp_path):
+                    os.remove(temp_path)
+    else:
+        form = IAUploadForm()
+
+    return render(request, 'vendedores_painel/nova_oferta_ia.html', {'form': form, 'titulo_pagina': 'Nova Oferta Flash (IA)'})

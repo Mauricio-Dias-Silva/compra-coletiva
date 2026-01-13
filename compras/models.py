@@ -81,3 +81,17 @@ class Cupom(models.Model):
     def esta_valido(self):
         """Verifica se o cupom é válido (disponível e não expirado)."""
         return self.status == 'disponivel' and self.valido_ate >= timezone.now()
+
+
+# === NOVO: CÓDIGO PROMOCIONAL (MARKETING) ===
+class CodigoPromocional(models.Model):
+    codigo = models.CharField(max_length=20, unique=True, verbose_name="Código (ex: BEMVINDO10)")
+    percentual_desconto = models.DecimalField(max_digits=5, decimal_places=2, verbose_name="Desconto (%)")
+    ativo = models.BooleanField(default=True)
+    quantidade_disponivel = models.IntegerField(default=100, verbose_name="Qtd Disponível")
+    
+    def __str__(self):
+        return f"{self.codigo} (-{self.percentual_desconto}%)"
+
+    def is_valid(self):
+        return self.ativo and self.quantidade_disponivel > 0

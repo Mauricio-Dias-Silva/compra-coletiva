@@ -24,6 +24,7 @@ class Vendedor(models.Model):
     logo: models.ImageField = models.ImageField(upload_to='vendedores/logos/', blank=True, null=True, verbose_name="Logo do Vendedor")
     endereco: models.CharField = models.CharField(max_length=255, verbose_name="Endereço Completo")
     ativo: models.BooleanField = models.BooleanField(default=True, verbose_name="Ativo no Site")
+    selo_verificado: models.BooleanField = models.BooleanField(default=False, verbose_name="Selo de Verificação (B2B/Partner)")
 
     status_aprovacao: models.CharField = models.CharField(
         max_length=10,
@@ -108,6 +109,16 @@ class Oferta(models.Model):
     ]
     status: models.CharField = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pendente', verbose_name="Status da Oferta")
 
+    # === LOGÍSTICA & ENTREGA (NOVO) ===
+    TIPO_ENTREGA_CHOICES = [
+        ('retirada', 'Retirada no Local (Vendedor)'),
+        ('entrega', 'Entrega (Delivery/Moto)'),
+        ('ambos', 'Retirada ou Entrega'),
+    ]
+    tipo_entrega = models.CharField(max_length=15, choices=TIPO_ENTREGA_CHOICES, default='retirada', verbose_name="Tipo de Entrega")
+    valor_frete = models.DecimalField(max_digits=6, decimal_places=2, default=0.00, verbose_name="Valor do Frete (Se houver)")
+    endereco_retirada = models.CharField(max_length=255, blank=True, null=True, verbose_name="Endereço de Retirada (Opcional)")
+    
     data_criacao: models.DateTimeField = models.DateTimeField(auto_now_add=True)
     data_atualizacao: models.DateTimeField = models.DateTimeField(auto_now=True)
 

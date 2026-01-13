@@ -2,6 +2,7 @@
 Django==5.1.4
 python-decouple==3.8        # Substitui o decouple para alinhar com o settings
 gunicorn==23.0.0        # Servidor Web
+google-generativeai     # AI Vision (Scanner de Encartes)
 # --- API Rest (Nomes Corrigidos) ---
 djangorestframework
 djangorestframework-simplejwt

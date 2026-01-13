@@ -131,6 +131,80 @@ class OfertaAdmin(admin.ModelAdmin):
     raw_id_fields = ('vendedor', 'categoria') 
     actions = ['publicar_ofertas', 'despublicar_ofertas']
 
+    # --- AI Scanner Integration ---
+    def get_urls(self):
+        urls = super().get_urls()
+        from django.urls import path
+        my_urls = [
+            path('import-flyer/', self.admin_site.admin_view(self.import_flyer), name='ofertas_oferta_import_flyer'),
+        ]
+        return my_urls + urls
+
+    def import_flyer(self, request):
+        from django import forms
+        from django.shortcuts import render, redirect
+        from django.contrib import messages
+        from .services.ai_scanner import AIScannerService
+        import os
+
+        class ImportFlyerForm(forms.Form):
+            flyer_image = forms.ImageField(label="Foto do Encarte/Prateleira")
+            margin = forms.DecimalField(initial=20.0, label="Margem de Lucro (%)")
+
+        if request.method == "POST":
+            form = ImportFlyerForm(request.POST, request.FILES)
+            if form.is_valid():
+                image = form.cleaned_data['flyer_image']
+                margin = float(form.cleaned_data['margin'])
+                
+                # Save temp
+                temp_path = f"temp_upload_{image.name}"
+                with open(temp_path, 'wb+') as destination:
+                    for chunk in image.chunks():
+                        destination.write(chunk)
+                
+                try:
+                    scanner = AIScannerService()
+                    products = scanner.scan_flyer(temp_path, margin_percent=margin)
+                    
+                    if not products:
+                        self.message_user(request, "Nenbum produto identificado pela IA.", level=messages.WARNING)
+                    else:
+                        created_count = 0
+                        vendedor_padrao = Vendedor.objects.filter(ativo=True).first() # Fallback
+                        
+                        for p in products:
+                            Oferta.objects.create(
+                                titulo=p.get('suggested_title') or p.get('name'),
+                                descricao_detalhada=f"Importado da Prateleira.\nItem: {p['name']}\nMeta: Fechar Caixa com {p['min_qty']} unidades.\nCusto Detectado: R$ {p['cost_price']}",
+                                preco_original=p['selling_price'] * 1.5, # Fake Higher Original
+                                preco_desconto=p['selling_price'], # Our Calculated Price
+                                vendedor=vendedor_padrao,
+                                status='pendente',
+                                tipo_oferta='lote', # FORCE LOTE
+                                quantidade_minima_ativacao=p['min_qty'], # BOX LOGIC
+                                quantidade_vendida=0
+                            )
+                            created_count += 1
+                        
+                        self.message_user(request, f"✅ SUCESSO! {created_count} ofertas criadas como 'Pendente'. Revise-as.")
+                except Exception as e:
+                    self.message_user(request, f"Erro Fatal na IA: {e}", level=messages.ERROR)
+                finally:
+                    if os.path.exists(temp_path):
+                        os.remove(temp_path)
+                return redirect("..")
+        else:
+            form = ImportFlyerForm()
+            
+        context = dict(
+           self.admin_site.each_context(request),
+           form=form,
+           opts=self.model._meta,
+           title="Importar Ofertas via Encarte (IA)"
+        )
+        return render(request, "admin/ofertas/import_flyer.html", context)
+    
     @admin.action(description='Publicar ofertas selecionadas')
     def publicar_ofertas(self, request, queryset):
         updated = queryset.update(publicada=True)

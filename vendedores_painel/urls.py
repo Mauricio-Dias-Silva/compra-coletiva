@@ -11,6 +11,7 @@ urlpatterns = [
     
     # Gerenciamento de Ofertas
     path('ofertas/nova/', views.criar_oferta, name='criar_oferta'),
+    path('ofertas/nova-ia/', views.nova_oferta_ia, name='nova_oferta_ia'), # <--- NOVA ROTA IA
     path('ofertas/<int:pk>/editar/', views.editar_oferta, name='editar_oferta'),
     
     # Gerenciamento de Cupons

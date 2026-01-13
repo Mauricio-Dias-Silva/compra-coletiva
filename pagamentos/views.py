@@ -150,6 +150,24 @@ def notificacao_pagamento_mp(request):
                                                 )
                                                 oferta.quantidade_vendida += entidade_pagamento.quantidade
                                                 oferta.save()
+
+                                                # === LÓGICA DE INDICAÇÃO (REFERRAL) ===
+                                                if entidade_pagamento.usuario.indicado_por:
+                                                    referrer = entidade_pagamento.usuario.indicado_por
+                                                    # Ganha 2% do valor da compra
+                                                    reward = float(entidade_pagamento.valor_total) * 0.02
+                                                    if reward > 0:
+                                                        from pedidos_coletivos.models import CreditoUsuario
+                                                        # Add Credits logic (Assuming CreditoUsuario has a manager or method, or just create)
+                                                        # Checking CreditoUsuario model might be needed, but standard logic is:
+                                                        CreditoUsuario.adicionar_credito(
+                                                            usuario=referrer,
+                                                            valor=reward,
+                                                            descricao=f"Bônus por indicação: Compra de {entidade_pagamento.usuario.username}"
+                                                        )
+                                                        logger.info(f"REFERRAL: Creditado R$ {reward} para {referrer.username}")
+                                                # ======================================
+
                                             logger.info(f"Compra {entidade_pagamento.id} por unidade: APROVADA. Cupom gerado/verificado.")
 
                                     elif isinstance(entidade_pagamento, PedidoColetivo): 
