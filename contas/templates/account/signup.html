@@ -3,55 +3,67 @@
 
 {% load i18n %}
 {% load account socialaccount %}
+{% load static %}
 
 {% block titulo_pagina %}{% trans "Registrar" %}{% endblock %}
 
 {% block conteudo %}
-<div class="row justify-content-center">
-  <div class="col-md-6">
-    <div class="card shadow-sm mt-5">
-      <div class="card-header bg-primary text-white text-center">
-        <h3 class="mb-0">{% trans "Registrar Nova Conta" %}</h3>
+<div class="row justify-content-center align-items-center" style="min-height: 85vh;">
+  <div class="col-md-6 col-lg-5">
+    <div class="card shadow-lg border-0 rounded-lg overflow-hidden glass-effect">
+      <div class="card-header bg-transparent text-center border-0 pt-4 pb-0">
+        <h2 class="mb-0 fw-bold text-success gradient-text-success">{% trans "Junte-se à Revolução!" %}</h2>
+        <p class="text-muted small">Crie sua conta e comece a economizar em grupo hoje mesmo.</p>
       </div>
-      <div class="card-body">
-        <p class="text-center">{% blocktrans %}Já tem uma conta? Então por favor <a href="{{ login_url }}">faça login</a>.{% endblocktrans %}</p>
+      <div class="card-body p-5">
 
         <form class="signup" id="signup_form" method="POST" action="{% url 'account_signup' %}">
           {% csrf_token %}
-          
-          {% for field in form %}
-            <div class="mb-3">
-              <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
-              {{ field }}
-              {% if field.help_text %}
-                <div class="form-text">{{ field.help_text }}</div>
-              {% endif %}
-              {% for error in field.errors %}
-                <div class="text-danger small">{{ error }}</div>
-              {% endfor %}
-            </div>
-          {% endfor %}
 
           {% if form.non_field_errors %}
-              <div class="alert alert-danger">
-                  {% for error in form.non_field_errors %}
-                      <p class="mb-0">{{ error }}</p>
-                  {% endfor %}
-              </div>
+          <div class="alert alert-danger shadow-sm border-0 mb-4">
+            {% for error in form.non_field_errors %}
+            <p class="mb-0"><i class="bi bi-exclamation-triangle-fill me-2"></i>{{ error }}</p>
+            {% endfor %}
+          </div>
           {% endif %}
 
+          {% for field in form %}
+          <div class="mb-3 form-floating">
+            {# Usar widget.input_type para identificar se é senha #}
+            {{ field|add_class:"form-control rounded-pill border-0 shadow-sm bg-light" }}
+            <label for="{{ field.id_for_label }}" class="text-muted ps-4">{{ field.label }}</label>
+            {% if field.help_text %}
+            <div class="form-text ps-3 small text-muted fst-italic">{{ field.help_text|safe }}</div>
+            {# safe é importante aqui pois o help_text de senha pode conter HTML #}
+            {% endif %}
+            {% for error in field.errors %}
+            <div class="text-danger small ps-3 mt-1 fw-bold">{{ error }}</div>
+            {% endfor %}
+          </div>
+          {% endfor %}
+
           {% if redirect_field_value %}
-            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+          <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
           {% endif %}
-          <button class="btn btn-success btn-lg w-100 mt-3" type="submit">{% trans "Registrar" %} &raquo;</button>
+
+          <div class="d-grid gap-2 mt-4">
+            <button class="btn btn-success btn-lg rounded-pill shadow-sm gradient-btn-success" type="submit">
+              {% trans "Criar Minha Conta" %} <i class="bi bi-person-plus-fill ms-2"></i>
+            </button>
+          </div>
         </form>
+
+        <p class="text-center mt-4 text-muted small">
+          {% blocktrans %}Já tem uma conta? <a href="{{ login_url }}"
+            class="fw-bold text-success text-decoration-none">Faça login</a>.{% endblocktrans %}
+        </p>
 
         {% get_providers as socialaccount_providers %}
         {% if socialaccount_providers %}
-        <hr>
-        <div class="socialaccount_ballot text-center">
-          <p>{% trans "Ou registre-se com uma conta social:" %}</p>
-          <ul class="socialaccount_providers list-unstyled">
+        <div class="socialaccount_ballot text-center mt-4">
+          <p class="text-muted small mb-3">{% trans "Ou registre-se rapidamente com:" %}</p>
+          <ul class="socialaccount_providers list-unstyled d-flex justify-content-center gap-2">
             {% include "socialaccount/snippets/provider_list.html" with process="signup" %}
           </ul>
         </div>
@@ -66,23 +78,41 @@
 
 {% block extras_css %}
 <style>
-    /* Estilos para o formulário */
-    .form-control {
-        width: 100%;
-        padding: 0.75rem 1rem;
-        font-size: 1rem;
-        line-height: 1.5;
-        color: #495057;
-        background-color: #fff;
-        background-clip: padding-box;
-        border: 1px solid #ced4da;
-        border-radius: 0.25rem;
-        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-    }
-    .form-control:focus {
-        border-color: #80bdff;
-        outline: 0;
-        box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
-    }
+  /* Background animado sutil */
+  body {
+    background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+  }
+
+  /* Glassmorphism Card */
+  .glass-effect {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+  }
+
+  /* Gradient Text */
+  .gradient-text-success {
+    background: linear-gradient(45deg, #198754, #20c997);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Inputs Stylized */
+  .form-control:focus {
+    background-color: #fff;
+    box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.15);
+    border-color: transparent;
+  }
+
+  /* Button Gradient */
+  .gradient-btn-success {
+    background: linear-gradient(45deg, #198754, #157347);
+    border: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .gradient-btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(25, 135, 84, 0.3);
+  }
 </style>
 {% endblock extras_css %}

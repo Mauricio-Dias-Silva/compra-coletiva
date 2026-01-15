@@ -1,59 +1,71 @@
 {# contas/templates/account/login.html #}
 {% extends "base.html" %}
 
-{% load i18n %} {# Para usar tags de internacionalização do Django/allauth #}
-{% load account socialaccount %} {# Para tags específicas do allauth #}
+{% load i18n %}
+{% load account socialaccount %}
+{% load static %} {# Para carregar logo se houver #}
 
 {% block titulo_pagina %}{% trans "Entrar" %}{% endblock %}
 
 {% block conteudo %}
-<div class="row justify-content-center">
-  <div class="col-md-6">
-    <div class="card shadow-sm mt-5">
-      <div class="card-header bg-primary text-white text-center">
-        <h3 class="mb-0">{% trans "Entrar" %}</h3>
+<div class="row justify-content-center align-items-center" style="min-height: 80vh;">
+  <div class="col-md-5">
+    <div class="card shadow-lg border-0 rounded-lg overflow-hidden glass-effect">
+      <div class="card-header bg-transparent text-center border-0 pt-4 pb-0">
+        <h2 class="mb-0 fw-bold text-primary gradient-text">{% trans "Bem-vindo de Volta!" %}</h2>
+        <p class="text-muted small">Acesse sua conta para aproveitar as melhores ofertas.</p>
       </div>
-      <div class="card-body">
-        <p class="text-center">{% trans "Se você ainda não tem uma conta, por favor" %} <a href="{% url 'account_signup' %}">{% trans "registre-se" %}</a>.</p>
-
+      <div class="card-body p-5">
+        
         <form class="login" method="POST" action="{% url 'account_login' %}">
           {% csrf_token %}
           
-          {# Renderiza os campos do formulário manualmente para aplicar estilos Bootstrap #}
-          {% for field in form %}
-            <div class="mb-3">
-              <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
-              {{ field|add_class:"form-control" }} {# <--- ADICIONADO AQUI: |add_class:"form-control" #}
-              {% if field.help_text %}
-                <div class="form-text">{{ field.help_text }}</div>
-              {% endif %}
-              {% for error in field.errors %}
-                <div class="text-danger small">{{ error }}</div>
-              {% endfor %}
-            </div>
-          {% endfor %}
-
           {% if form.non_field_errors %}
-              <div class="alert alert-danger">
+              <div class="alert alert-danger shadow-sm border-0 mb-4">
                   {% for error in form.non_field_errors %}
-                      <p class="mb-0">{{ error }}</p>
+                      <p class="mb-0"><i class="bi bi-exclamation-triangle-fill me-2"></i>{{ error }}</p>
                   {% endfor %}
               </div>
           {% endif %}
 
-          <button class="btn btn-primary btn-lg w-100 mt-3" type="submit">{% trans "Entrar" %}</button>
+          {% for field in form %}
+            <div class="mb-4 form-floating">
+              {{ field|add_class:"form-control rounded-pill border-0 shadow-sm bg-light" }}
+              <label for="{{ field.id_for_label }}" class="text-muted ps-4">{{ field.label }}</label>
+              {% if field.help_text %}
+                <div class="form-text ps-3 small">{{ field.help_text }}</div>
+              {% endif %}
+              {% for error in field.errors %}
+                <div class="text-danger small ps-3 mt-1">{{ error }}</div>
+              {% endfor %}
+            </div>
+          {% endfor %}
+
+          <div class="d-grid gap-2 mt-4">
+            <button class="btn btn-primary btn-lg rounded-pill shadow-sm gradient-btn" type="submit">
+                {% trans "Entrar" %} <i class="bi bi-box-arrow-in-right ms-2"></i>
+            </button>
+          </div>
         </form>
         
-        <p class="text-center mt-3">
-            <a class="button secondaryAction" href="{% url 'account_reset_password' %}">{% trans "Esqueceu a senha?" %}</a>
+        <div class="text-center mt-4">
+            <a class="text-decoration-none text-muted small hover-link" href="{% url 'account_reset_password' %}">
+                <i class="bi bi-lock-fill me-1"></i>{% trans "Esqueceu a senha?" %}
+            </a>
+        </div>
+
+        <hr class="my-4 text-muted opacity-25">
+
+        <p class="text-center mb-4 text-muted small">
+            {% trans "Ainda não tem uma conta?" %} 
+            <a href="{% url 'account_signup' %}" class="fw-bold text-primary text-decoration-none">{% trans "Crie uma agora" %}</a>
         </p>
 
         {% get_providers as socialaccount_providers %}
         {% if socialaccount_providers %}
-        <hr>
         <div class="socialaccount_ballot text-center">
-          <p>{% trans "Ou entre com uma conta social:" %}</p>
-          <ul class="socialaccount_providers list-unstyled">
+          <p class="text-muted small mb-3">{% trans "Ou continue com" %}</p>
+          <ul class="socialaccount_providers list-unstyled d-flex justify-content-center gap-2">
             {% include "socialaccount/snippets/provider_list.html" with process="login" %}
           </ul>
         </div>
@@ -68,23 +80,46 @@
 
 {% block extras_css %}
 <style>
-    /* Estilos para o formulário */
-    .form-control {
-        width: 100%;
-        padding: 0.75rem 1rem;
-        font-size: 1rem;
-        line-height: 1.5;
-        color: #495057;
-        background-color: #fff;
-        background-clip: padding-box;
-        border: 1px solid #ced4da;
-        border-radius: 0.25rem;
-        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    /* Background animado sutil */
+    body {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     }
+
+    /* Glassmorphism Card */
+    .glass-effect {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+    }
+
+    /* Gradient Text */
+    .gradient-text {
+        background: linear-gradient(45deg, #0d6efd, #0099ff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    /* Inputs Stylized */
     .form-control:focus {
-        border-color: #80bdff;
-        outline: 0;
-        box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+        background-color: #fff;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+        border-color: transparent;
+    }
+
+    /* Button Gradient */
+    .gradient-btn {
+        background: linear-gradient(45deg, #0d6efd, #0056b3);
+        border: none;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .gradient-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(13, 110, 253, 0.3);
+    }
+
+    .hover-link:hover {
+        color: #0d6efd !important;
+        text-decoration: underline !important;
     }
 </style>
 {% endblock extras_css %}

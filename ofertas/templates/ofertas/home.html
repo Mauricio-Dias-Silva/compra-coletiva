@@ -4,148 +4,269 @@
 {% block titulo_pagina %}{{ titulo_pagina }}{% endblock titulo_pagina %}
 
 {% block conteudo %}
-    {# Carrossel de Banners (NOVO) - Perfeito para propaganda de fornecedores ou grandes ofertas #}
-    {% if banners %}
-    <div id="carouselExampleIndicators" class="carousel slide mb-4" data-bs-ride="carousel">
-        <div class="carousel-indicators">
-            {% for banner in banners %}
-                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="{{ forloop.counter0 }}" 
-                        class="{% if forloop.first %}active{% endif %}" aria-current="true" 
-                        aria-label="Slide {{ forloop.counter }}"></button>
-            {% endfor %}
-        </div>
-        <div class="carousel-inner rounded shadow-sm">
-            {% for banner in banners %}
-                <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                    {% if banner.url_destino %}
-                        <a href="{{ banner.url_destino }}" target="_blank">
-                            {# Lógica para exibir imagem ou placeholder #}
-                            {% if banner.imagem %}
-                                <img src="{{ banner.imagem.url }}" class="d-block w-100" alt="{{ banner.titulo }}">
-                            {% else %}
-                                <img src="https://via.placeholder.com/1200x400?text=Banner+Sem+Imagem" class="d-block w-100" alt="Sem Imagem">
-                            {% endif %}
-                        </a>
-                    {% else %}
-                        {% if banner.imagem %}
-                            <img src="{{ banner.imagem.url }}" class="d-block w-100" alt="{{ banner.titulo }}">
-                        {% else %}
-                            <img src="https://via.placeholder.com/1200x400?text=Banner+Sem+Imagem" class="d-block w-100" alt="Sem Imagem">
-                        {% endif %}
-                    {% endif %}
-                    <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded p-2">
-                        <h5>{{ banner.titulo }}</h5>
-                        {# <p>Slogan ou descrição curta do banner.</p> #}
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Previous</span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Next</span>
-        </button>
+{# Carrossel de Banners (NOVO) - Perfeito para propaganda de fornecedores ou grandes ofertas #}
+{% if banners %}
+<div id="carouselExampleIndicators" class="carousel slide mb-4" data-bs-ride="carousel">
+    <div class="carousel-indicators">
+        {% for banner in banners %}
+        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="{{ forloop.counter0 }}"
+            class="{% if forloop.first %}active{% endif %}" aria-current="true"
+            aria-label="Slide {{ forloop.counter }}"></button>
+        {% endfor %}
     </div>
-    {% else %}
-    {# Jumbotron padrão se não houver banners (revisado para ser mais genérico) #}
-    <div class="p-5 mb-4 bg-light rounded-3 text-center"> 
-        <div class="container-fluid py-5">
-            <h1 class="display-5 fw-bold">{{ titulo_pagina }}</h1>
-            <p class="col-md-8 fs-4 mx-auto">Sua melhor plataforma de compras online, com ofertas diárias e economia coletiva!</p>
-            <hr class="my-4">
-            <a class="btn btn-primary btn-lg" href="{% url 'ofertas:lista_ofertas' %}" role="button">Descubra Nossas Ofertas</a>
-        </div>
-    </div>
-    {% endif %}
-
-    {# Seção 1: Ofertas Imperdíveis (Varejo Normal - Unidade) #}
-    <h2 class="text-center my-5">🛒 Ofertas Imperdíveis do VarejoUnido 🛒</h2>
-    {% if ofertas_destaque %} {# ofertas_destaque já são do tipo 'unidade' #}
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 mb-5">
-            {% for oferta in ofertas_destaque %}
-                <div class="col">
-                    <div class="card h-100 shadow-sm">
-                        {% if oferta.imagem_principal %}
-                            <img src="{{ oferta.imagem_principal.url }}" class="card-img-top" alt="{{ oferta.titulo }}" style="height: 200px; object-fit: cover;">
-                        {% else %}
-                            <img src="https://via.placeholder.com/300x200?text=Sem+Imagem" class="card-img-top" alt="Sem Imagem" style="height: 200px; object-fit: cover;">
-                        {% endif %}
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title">{{ oferta.titulo }}</h5>
-                            <p class="card-text text-muted">{{ oferta.descricao_detalhada|truncatechars:70 }}</p>
-                            <div class="mt-auto">
-                                <p class="mb-1">
-                                    <span class="text-decoration-line-through text-muted me-2">R$ {{ oferta.preco_original|floatformat:2 }}</span>
-                                    <span class="fs-5 fw-bold text-success">R$ {{ oferta.preco_desconto|floatformat:2 }}</span>
-                                </p>
-                                <span class="badge bg-warning text-dark mb-2">{{ oferta.percentual_desconto }} OFF</span>
-                                <span class="badge bg-primary ms-2">{{ oferta.get_tipo_oferta_display }}</span> 
-
-                                {# Contador Regressivo #}
-                                <p class="card-text text-danger fw-bold mt-2" 
-                                   data-countdown="{{ oferta.data_termino|date:'Y/m/d H:i:s' }}"
-                                   id="countdown-{{ oferta.id }}">
-                                   Carregando tempo...
-                                </p>
-
-                                <a href="{% url 'ofertas:detalhe_oferta' slug_oferta=oferta.slug %}" class="btn btn-primary btn-sm d-block">Ver Oferta</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
-        <div class="text-center mb-5">
-            <a href="{% url 'ofertas:lista_ofertas' %}" class="btn btn-outline-primary btn-lg">Ver Todas as Ofertas de Varejo</a>
-        </div>
-    {% else %}
-        <div class="alert alert-info text-center my-5" role="alert">
-            Nenhuma oferta imperdível do varejo normal encontrada no momento.
-            <a href="{% url 'ofertas:lista_ofertas' %}" class="alert-link">Explore todas as opções!</a>
-        </div>
-    {% endif %}
-
-    {# Seção 2: Chamada para a Compra Coletiva #}
-    <div class="p-5 mb-4 bg-primary text-white rounded-3 text-center shadow-lg">
-        <div class="container-fluid py-5">
-            <h2 class="display-5 fw-bold">🤝 Compre Junto e Economize Muito Mais! 🤝</h2>
-            <p class="col-md-8 fs-4 mx-auto">Alcance descontos ainda maiores ao comprar em grupo. Sua economia é nossa força!</p>
-            <hr class="my-4 border-light">
-            <p>Descubra produtos e serviços com preços inacreditáveis que só a força da coletividade pode trazer.</p>
-            <a class="btn btn-warning btn-lg" href="{% url 'ofertas:compre_junto' %}" role="button">Ver Ofertas Coletivas Agora!</a>
-        </div>
-    </div>
-
-    {# Seção 3: Fornecedores e Parceiros Destacados (Monetização por Publicidade) #}
-    <h2 class="text-center my-5">🤝 Nossos Parceiros em Destaque 🤝</h2>
-    <div class="row row-cols-2 row-cols-md-4 g-4 justify-content-center mb-5">
-        {% for vendedor in vendedores_destaque %} {# NOVO: Passar vendedores_destaque para o contexto da home view #}
-            <div class="col text-center">
-                <div class="card h-100 p-3 shadow-sm d-flex align-items-center justify-content-center">
-                    {% if vendedor.logo %}
-                        <img src="{{ vendedor.logo.url }}" class="img-fluid" alt="Logo {{ vendedor.nome_empresa }}" style="max-height: 80px; width: auto;">
-                    {% else %}
-                        <img src="https://via.placeholder.com/80x80?text={{ vendedor.nome_empresa|first }}" class="img-fluid rounded-circle" alt="Sem Logo" style="max-height: 80px; width: 80px; object-fit: cover;">
-                    {% endif %}
-                    <p class="card-text mt-2 mb-0 fw-bold">{{ vendedor.nome_empresa }}</p>
-                    <a href="{% url 'ofertas:lista_ofertas' %}?q={{ vendedor.nome_empresa }}" class="btn btn-link btn-sm mt-1">Ver Ofertas</a>
-                </div>
-            </div>
-        {% empty %}
-        <div class="col-12">
-            <div class="alert alert-secondary text-center" role="alert">
-                Em breve, mais parceiros incríveis por aqui!
+    <div class="carousel-inner rounded shadow-sm">
+        {% for banner in banners %}
+        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+            {% if banner.url_destino %}
+            <a href="{{ banner.url_destino }}" target="_blank">
+                {# Lógica para exibir imagem ou placeholder #}
+                {% if banner.imagem %}
+                <img src="{{ banner.imagem.url }}" class="d-block w-100" alt="{{ banner.titulo }}">
+                {% else %}
+                <img src="https://via.placeholder.com/1200x400?text=Banner+Sem+Imagem" class="d-block w-100"
+                    alt="Sem Imagem">
+                {% endif %}
+            </a>
+            {% else %}
+            {% if banner.imagem %}
+            <img src="{{ banner.imagem.url }}" class="d-block w-100" alt="{{ banner.titulo }}">
+            {% else %}
+            <img src="https://via.placeholder.com/1200x400?text=Banner+Sem+Imagem" class="d-block w-100"
+                alt="Sem Imagem">
+            {% endif %}
+            {% endif %}
+            <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded p-2">
+                <h5>{{ banner.titulo }}</h5>
+                {# <p>Slogan ou descrição curta do banner.</p> #}
             </div>
         </div>
         {% endfor %}
     </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators"
+        data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators"
+        data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+</div>
+{% else %}
+{# Jumbotron padrão se não houver banners (revisado para ser mais genérico) #}
+<div class="p-5 mb-4 bg-light rounded-3 text-center">
+    <div class="container-fluid py-5">
+        <h1 class="display-5 fw-bold">{{ titulo_pagina }}</h1>
+        <p class="col-md-8 fs-4 mx-auto">Sua melhor plataforma de compras online, com ofertas diárias e economia
+            coletiva!</p>
+        <hr class="my-4">
+        <a class="btn btn-primary btn-lg" href="{% url 'ofertas:lista_ofertas' %}" role="button">Descubra Nossas
+            Ofertas</a>
+    </div>
+</div>
+{% endif %}
+
+{# Seção 1: Ofertas Imperdíveis (Varejo Normal - Unidade) #}
+<h2 class="text-center my-5">🛒 Ofertas Imperdíveis do VarejoUnido 🛒</h2>
+{% if ofertas_destaque %} {# ofertas_destaque já são do tipo 'unidade' #}
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 mb-5">
+    {% for oferta in ofertas_destaque %}
+    <div class="col">
+        <div class="card h-100 shadow-sm">
+            {% if oferta.imagem_principal %}
+            <img src="{{ oferta.imagem_principal.url }}" class="card-img-top" alt="{{ oferta.titulo }}"
+                style="height: 200px; object-fit: cover;">
+            {% else %}
+            <img src="https://via.placeholder.com/300x200?text=Sem+Imagem" class="card-img-top" alt="Sem Imagem"
+                style="height: 200px; object-fit: cover;">
+            {% endif %}
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title">{{ oferta.titulo }}</h5>
+                <p class="card-text text-muted">{{ oferta.descricao_detalhada|truncatechars:70 }}</p>
+                <div class="mt-auto">
+                    <p class="mb-1">
+                        <span class="text-decoration-line-through text-muted me-2">R$ {{
+                            oferta.preco_original|floatformat:2 }}</span>
+                        <span class="fs-5 fw-bold text-success">R$ {{ oferta.preco_desconto|floatformat:2 }}</span>
+                    </p>
+                    <span class="badge bg-warning text-dark mb-2">{{ oferta.percentual_desconto }} OFF</span>
+                    <span class="badge bg-primary ms-2">{{ oferta.get_tipo_oferta_display }}</span>
+
+                    {# Contador Regressivo #}
+                    <p class="card-text text-danger fw-bold mt-2"
+                        data-countdown="{{ oferta.data_termino|date:'Y/m/d H:i:s' }}" id="countdown-{{ oferta.id }}">
+                        Carregando tempo...
+                    </p>
+
+                    <a href="{% url 'ofertas:detalhe_oferta' slug_oferta=oferta.slug %}"
+                        class="btn btn-primary btn-sm d-block">Ver Oferta</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+<div class="text-center mb-5">
+    <a href="{% url 'ofertas:lista_ofertas' %}" class="btn btn-outline-primary btn-lg">Ver Todas as Ofertas de
+        Varejo</a>
+</div>
+{% else %}
+<div class="alert alert-info text-center my-5" role="alert">
+    Nenhuma oferta imperdível do varejo normal encontrada no momento.
+    <a href="{% url 'ofertas:lista_ofertas' %}" class="alert-link">Explore todas as opções!</a>
+</div>
+{% endif %}
+
+{# Seção 2: Chamada para a Compra Coletiva #}
+<div class="p-5 mb-4 bg-primary text-white rounded-3 text-center shadow-lg">
+    <div class="container-fluid py-5">
+        <h2 class="display-5 fw-bold">🤝 Compre Junto e Economize Muito Mais! 🤝</h2>
+        <p class="col-md-8 fs-4 mx-auto">Alcance descontos ainda maiores ao comprar em grupo. Sua economia é nossa
+            força!</p>
+        <hr class="my-4 border-light">
+        <p>Descubra produtos e serviços com preços inacreditáveis que só a força da coletividade pode trazer.</p>
+        <a class="btn btn-warning btn-lg" href="{% url 'ofertas:compre_junto' %}" role="button">Ver Ofertas Coletivas
+            Agora!</a>
+    </div>
+</div>
+
+{# Seção 3.1: Como Funciona (NOVO) - Explicando o Valor #}
+<div class="container my-5 py-5">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold display-6">Como o <span class="text-primary">VarejoUnido</span> Funciona?</h2>
+        <p class="text-muted lead">Economize em 3 passos simples</p>
+    </div>
+    <div class="row g-4 text-center">
+        <div class="col-md-4">
+            <div class="p-4 rounded shadow-sm bg-white h-100 border-bottom border-primary border-4">
+                <div class="mb-3 text-primary">
+                    <i class="bi bi-search display-4"></i>
+                </div>
+                <h4>1. Explore Ofertas</h4>
+                <p class="text-muted">Navegue por milhares de ofertas exclusivas de lojistas verificados.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="p-4 rounded shadow-sm bg-white h-100 border-bottom border-success border-4">
+                <div class="mb-3 text-success">
+                    <i class="bi bi-people-fill display-4"></i>
+                </div>
+                <h4>2. Entre no Grupo</h4>
+                <p class="text-muted">Junte-se a outros compradores para desbloquear preços de atacado.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="p-4 rounded shadow-sm bg-white h-100 border-bottom border-warning border-4">
+                <div class="mb-3 text-warning">
+                    <i class="bi bi-emoji-smile-fill display-4"></i>
+                </div>
+                <h4>3. Economize Muito</h4>
+                <p class="text-muted">Garanta seu produto com um desconto que você não acharia sozinho!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# Seção 3: Fornecedores e Parceiros Destacados (Monetização por Publicidade) #}
+<h2 class="text-center mt-5 mb-4">🤝 Nossos Parceiros em Destaque 🤝</h2>
+<div class="row row-cols-2 row-cols-md-4 g-4 justify-content-center mb-5">
+    {% for vendedor in vendedores_destaque %}
+    <div class="col text-center">
+        <div
+            class="card h-100 p-3 shadow-sm border-0 bg-light d-flex align-items-center justify-content-center hover-up">
+            {% if vendedor.logo %}
+            <img src="{{ vendedor.logo.url }}" class="img-fluid" alt="Logo {{ vendedor.nome_empresa }}"
+                style="max-height: 80px; width: auto; filter: grayscale(20%); transition: filter 0.3s;">
+            {% else %}
+            <div class="bg-white rounded-circle d-flex align-items-center justify-content-center shadow-sm"
+                style="width: 80px; height: 80px;">
+                <span class="fw-bold text-primary fs-3">{{ vendedor.nome_empresa|first }}</span>
+            </div>
+            {% endif %}
+            <p class="card-text mt-3 mb-0 fw-bold text-dark">{{ vendedor.nome_empresa }}</p>
+            <a href="{% url 'ofertas:lista_ofertas' %}?q={{ vendedor.nome_empresa }}"
+                class="btn btn-outline-primary btn-sm rounded-pill mt-2">Visitar Loja</a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="alert alert-secondary text-center rounded-pill" role="alert">
+            Em breve, mais parceiros incríveis por aqui!
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{# Seção 4: Depoimentos (NOVO) - Prova Social #}
+<div class="bg-primary bg-opacity-10 py-5 my-5 rounded-3">
+    <div class="container">
+        <h2 class="text-center fw-bold mb-5">O que dizem nossos clientes ❤️</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="flex-shrink-0">
+                            <i class="bi bi-person-circle fs-1 text-secondary"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h5 class="mb-0">Ana Paula</h5>
+                            <small class="text-muted">Economizou R$ 150,00</small>
+                        </div>
+                    </div>
+                    <p class="fst-italic text-muted">"Incrível! Comprei um kit de ferramentas pro meu marido no Lote e
+                        pagamos metade do preço da loja."</p>
+                    <div class="text-warning">
+                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
+                            class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="flex-shrink-0">
+                            <i class="bi bi-person-circle fs-1 text-secondary"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h5 class="mb-0">Marcos Roberto</h5>
+                            <small class="text-muted">Cliente Frequente</small>
+                        </div>
+                    </div>
+                    <p class="fst-italic text-muted">"O sistema de avisos é ótimo. Assim que o lote fechou, já recebi
+                        meu cupom. Recomendo demais!"</p>
+                    <div class="text-warning">
+                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
+                            class="bi bi-star-fill"></i><i class="bi bi-star-half"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="flex-shrink-0">
+                            <i class="bi bi-person-circle fs-1 text-secondary"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h5 class="mb-0">Fernanda Lima</h5>
+                            <small class="text-muted">Aprovou a facilidade</small>
+                        </div>
+                    </div>
+                    <p class="fst-italic text-muted">"Adorei a interface, super fácil de usar tanto no celular quanto no
+                        note. Parabéns!"</p>
+                    <div class="text-warning">
+                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
+                            class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 
-    {# Controles de Paginação (Removido da home para simplificar, a home foca nos destaques e chamada) #}
-    {# As ofertas normais que não são destaque já são paginadas em 'ofertas:lista_ofertas' #}
+{# Controles de Paginação (Removido da home para simplificar, a home foca nos destaques e chamada) #}
+{# As ofertas normais que não são destaque já são paginadas em 'ofertas:lista_ofertas' #}
 
 {% endblock conteudo %}
 
@@ -153,7 +274,7 @@
 {% block extras_js %}
 <script>
     function updateCountdown() {
-        document.querySelectorAll('[data-countdown]').forEach(function(element) {
+        document.querySelectorAll('[data-countdown]').forEach(function (element) {
             const endDateString = element.getAttribute('data-countdown');
             const endTime = new Date(endDateString.replace(/-/g, '/')).getTime();
             const now = new Date().getTime();
