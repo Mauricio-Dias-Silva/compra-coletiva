@@ -20,4 +20,7 @@ urlpatterns = [
     
     # Checkout Page (Para usar Cupom)
     path('<slug:slug_oferta>/checkout/', views.checkout_view, name='checkout'),
+    
+    # 🤖 TRIGGER DE I.A. (ADMIN)
+    path('trigger-agent/', views.trigger_autonomous_agent, name='trigger_agent'),
 ]

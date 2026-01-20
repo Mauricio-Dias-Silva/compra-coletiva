@@ -287,3 +287,22 @@ def checkout_view(request, slug_oferta):
         'cupom_aplicado': cupom_aplicado
     }
     return render(request, 'ofertas/checkout.html', context)
+
+# --- GATILHO SUPER-SECRETO (ADMIN ONLY) ---
+from django.core.management import call_command
+from django.contrib.admin.views.decorators import staff_member_required
+
+@staff_member_required
+def trigger_autonomous_agent(request):
+    """
+    Acorda o Agente Autônomo na nuvem para criar produtos.
+    Acessível apenas por Admins em: /ofertas/trigger-agent/
+    """
+    try:
+        # Roda o comando em background (ou síncrono se for rápido)
+        call_command('inject_autonomous_deals')
+        messages.success(request, "🤖 Codex Autonomous Agent ativado com sucesso! Novos produtos gerados.")
+    except Exception as e:
+        messages.error(request, f"Erro ao ativar agente: {str(e)}")
+    
+    return redirect('ofertas:lista_ofertas')
