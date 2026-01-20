@@ -6,6 +6,8 @@ from django.utils import timezone
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.management import call_command
+from django.contrib.admin.views.decorators import staff_member_required
 
 from .models import Oferta, Categoria, Avaliacao, Banner, Vendedor
 from .forms import AvaliacaoForm
@@ -289,9 +291,6 @@ def checkout_view(request, slug_oferta):
     return render(request, 'ofertas/checkout.html', context)
 
 # --- GATILHO SUPER-SECRETO (ADMIN ONLY) ---
-from django.core.management import call_command
-from django.contrib.admin.views.decorators import staff_member_required
-
 @staff_member_required
 def trigger_autonomous_agent(request):
     """
