@@ -157,9 +157,16 @@ class Oferta(models.Model):
 
     def verificar_lote_e_finalizar(self):
         if self.tipo_oferta == 'lote' and self.status == 'ativa' and self.esta_expirada:
-            if self.quantidade_vendida >= self.quantidade_minima_ativacao:
                 self.status = 'sucesso'
                 print(f"LOTE SUCESSO: Oferta '{self.titulo}' atingiu o mínimo. Processar capturas e cupons.")
+                
+                # --- INTEGRAÇÃO LOGÍSTICA (PYTHONJET) - MODO MANUAL (EXPEDIÇÃO) ---
+                # A chamada automática foi desativada para dar controle ao expedidor.
+                # O botão "Chamar Motoboy" no Painel de Expedição fará essa chamada.
+                
+                # try:
+                #     import requests ... (Lógica movida para View de Expedição)
+                
             else:
                 self.status = 'falha_lote'
                 print(f"LOTE FALHA: Oferta '{self.titulo}' NÃO atingiu o mínimo. Processar estornos.")

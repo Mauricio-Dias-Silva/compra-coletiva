@@ -65,6 +65,7 @@ INSTALLED_APPS = [
     'pedidos_coletivos',
     'fiscal', # Módulo Fiscal (NFe/NFS-e)
     'comunicacao', # Módulo de E-mails e Notificações
+    'logistica_app', # App de Logística (Painel Motoboy)
 ]
 
 MIDDLEWARE = [
@@ -169,6 +170,9 @@ MERCADO_PAGO_ACCESS_TOKEN = config('MERCADO_PAGO_ACCESS_TOKEN', default='')
 
 # --- AI GEMINI ---
 GEMINI_API_KEY = config('GEMINI_API_KEY', default='')
+
+# --- LOGÍSTICA (PYTHONJET) ---
+PYTHONJET_LOGISTICS_API_KEY = config('PYTHONJET_LOGISTICS_API_KEY', default='')
 
 # --- CELERY ---
 CELERY_BROKER_URL = config('CELERY_BROKER_URL', default='redis://localhost:6379/0')

@@ -14,6 +14,10 @@ urlpatterns = [
     path('ofertas/nova-ia/', views.nova_oferta_ia, name='nova_oferta_ia'), # <--- NOVA ROTA IA
     path('ofertas/<int:pk>/editar/', views.editar_oferta, name='editar_oferta'),
     
+    # Expedição e Logística
+    path('expedicao/', views.expedition_list, name='expedition_list'),
+    path('expedicao/<int:oferta_id>/chamar-motoboy/', views.request_courier, name='request_courier'),
+    
     # Gerenciamento de Cupons
     path('cupons/', views.gerenciar_cupons, name='gerenciar_cupons'),
     

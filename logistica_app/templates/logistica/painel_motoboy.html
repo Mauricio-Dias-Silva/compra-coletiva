@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>🛵 Painel do Entregador</h2>
+        <div class="badge bg-success p-2">
+            Status: {{ entregador.online|yesno:"Online,Offline" }}
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Minhas Entregas -->
+        <div class="col-md-6">
+            <h4 class="mb-3">Minhas Missões Atuais</h4>
+            {% for entrega in ativas %}
+            <div class="card mb-3 border-warning">
+                <div class="card-body">
+                    <h5 class="card-title">Entrega #{{ entrega.id }}</h5>
+                    <p class="card-text">
+                        <strong>Origem:</strong> {{ entrega.endereco_origem }}<br>
+                        <strong>Destino:</strong> {{ entrega.endereco_destino }}
+                    </p>
+                    <div class="d-grid gap-2">
+                        <a href="https://waze.com/ul?q={{ entrega.endereco_destino }}" target="_blank"
+                            class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-map"></i> Abrir GPS
+                        </a>
+
+                        {% if entrega.status == 'aceita' %}
+                        <form action="{% url 'logistica_app:atualizar_status' entrega.id %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="status" value="coletada">
+                            <button class="btn btn-warning w-100">📦 Marcar como Coletado</button>
+                        </form>
+                        {% elif entrega.status == 'coletada' %}
+                        <form action="{% url 'logistica_app:atualizar_status' entrega.id %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="status" value="entregue">
+                            <button class="btn btn-success w-100">✅ Confirmar Entrega</button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-muted">Nenhuma entrega ativa no momento.</p>
+            {% endfor %}
+        </div>
+
+        <!-- Radar de Entregas -->
+        <div class="col-md-6">
+            <h4 class="mb-3">Radar de Entregas (Disponíveis)</h4>
+            {% for entrega in disponiveis %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <h5 class="card-title">R$ {{ entrega.valor_frete }}</h5>
+                        <span class="badge bg-info text-dark">{{ entrega.distancia_km }} km</span>
+                    </div>
+                    <p class="card-text small">
+                        De: {{ entrega.endereco_origem }}<br>
+                        Para: {{ entrega.endereco_destino }}
+                    </p>
+                    <a href="{% url 'logistica_app:aceitar_entrega' entrega.id %}" class="btn btn-primary w-100">
+                        ⚡ ACEITAR CORRIDA
+                    </a>
+                </div>
+            </div>
+            {% empty %}
+            <div class="alert alert-secondary text-center">
+                Procurando novas entregas... 📡
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

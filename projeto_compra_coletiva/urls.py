@@ -32,6 +32,7 @@ urlpatterns = [
     path('compras/', include('compras.urls')), 
     path('pagamentos/', include('pagamentos.urls')),
     path('pedidos-coletivos/', include('pedidos_coletivos.web_urls')), # Pedidos Coletivos (Site)
+    path('logistica/', include('logistica_app.urls')), # App do Motoboy (Frota Própria)
 
     # ---- URLS DE AUTENTICAÇÃO DA API (JWT) ----
     # O Flutter usará estas para login/refresh

@@ -304,3 +304,80 @@ def nova_oferta_ia(request):
         form = IAUploadForm()
 
     return render(request, 'vendedores_painel/nova_oferta_ia.html', {'form': form, 'titulo_pagina': 'Nova Oferta Flash (IA)'})
+
+
+# =============================================================================
+# 📦 PAINEL DE EXPEDIÇÃO & LOGÍSTICA
+# =============================================================================
+
+@vendedor_required
+def expedition_list(request):
+    """
+    Lista de pedidos/lotes prontos para expedição (separação e despacho).
+    """
+    vendedor = request.user.vendedor
+    
+    # Lotes Concretizados (Mínimo atingido, venda encerrada ou sucesso)
+    # status='sucesso' é o status final quando verificar_lote_e_finalizar roda
+    lotes_para_despacho = Oferta.objects.filter(
+        vendedor=vendedor,
+        tipo_oferta='lote',
+        status='sucesso' # Status que indica "Vendido, Pode Entregar"
+    ).annotate(
+        total_a_entregar=Count('pedidos_coletivos', filter=Q(pedidos_coletivos__status_pagamento='aprovado_mp'))
+    ).order_by('-data_termino')
+
+    contexto = {
+        'lotes': lotes_para_despacho,
+        'titulo_pagina': 'Painel de Expedição (Separação)'
+    }
+    return render(request, 'vendedores_painel/expedition.html', contexto)
+
+@vendedor_required
+def request_courier(request, oferta_id):
+    """
+    Ação manual do Expedidor: Chamar Motoboy via PythonJet API
+    """
+    oferta = get_object_or_404(Oferta, pk=oferta_id, vendedor=request.user.vendedor)
+    
+    if request.method == 'POST':
+        import requests
+        import json
+        
+        try:
+            # INTEGRACAO API PYTHONJET
+            # Em prod, usar variável de ambiente para a URL
+            api_url = "http://127.0.0.1:8000/api/v1/logistics/dispatch" 
+            
+            payload = {
+                "origin": oferta.endereco_retirada or oferta.vendedor.endereco,
+                "destination": "Endereço do Líder (Pendente de Implementação de Grupo)", # Placeholder
+                "order_id": f"LOTE-{oferta.id}-{oferta.slug}"
+            }
+            
+            from django.conf import settings
+            headers = {
+                "Content-Type": "application/json",
+                "X-API-KEY": settings.PYTHONJET_LOGISTICS_API_KEY
+            }
+            
+            # Timeout curto para não travar a UI
+            response = requests.post(api_url, json=payload, headers=headers, timeout=10)
+            
+            if response.status_code == 200:
+                data = response.json()
+                provider = data.get('provider', 'Motoboy')
+                tracking = data.get('tracking_code', '???')
+                
+                messages.success(request, f"✅ Motoboy Solicitado! ({provider}). Código de Rastreio: {tracking}")
+                
+                # Opcional: Marcar no modelo que a logística foi chamada
+                # oferta.status_logistica = 'chamado'
+                # oferta.save()
+            else:
+                messages.error(request, f"⚠️ Erro ao chamar logística: {response.text}")
+                
+        except Exception as e:
+            messages.error(request, f"❌ Falha de Conexão com PythonJet: {e}")
+            
+    return redirect('vendedores_painel:expedition_list')
