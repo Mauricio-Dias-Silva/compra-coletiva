@@ -117,12 +117,23 @@ DATABASES = {
 }
 
 # --- ARQUIVOS ESTÁTICOS ---
+# --- ARQUIVOS ESTÁTICOS & MEDIA ---
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'mediafiles'
+
+# --- GOOGLE CLOUD STORAGE (PythonJet Auto-Config) ---
+GS_BUCKET_NAME = config('GS_BUCKET_NAME', default=None)
+
+if GS_BUCKET_NAME:
+    DEFAULT_FILE_STORAGE = "storages.backends.gcloud.GoogleCloudStorage"
+    # STATICFILES_STORAGE = "storages.backends.gcloud.GoogleCloudStorage" # Opcional
+    GS_PROJECT_ID = config('GOOGLE_CLOUD_PROJECT', default=None)
+    GS_DEFAULT_ACL = "publicRead"
+    MEDIA_URL = f"https://storage.googleapis.com/{GS_BUCKET_NAME}/"
 
 # --- CONFIGURAÇÕES DRF & JWT ---
 REST_FRAMEWORK = {

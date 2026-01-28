@@ -11,7 +11,10 @@ django-cors-headers
 psycopg2-binary         # O driver correto para o PythonJet
 dj-database-url==3.0.1  # Conexão automática
 # --- Estáticos e Mídia ---
+# --- Estáticos e Mídia ---
 pillow==11.3.0          # Para imagens
+django-storages[google] # Google Cloud Storage
+google-cloud-storage    # Google Cloud Storage Lib
 # --- Autenticação ---
 django-allauth==65.10.0
 python3-openid==3.2.0
