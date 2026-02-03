@@ -15,6 +15,10 @@ urlpatterns = [
     # Página específica para "Compre Junto"
     path('compre-junto/', views.compre_junto_view, name='compre_junto'), 
     
+    # Heatmap Dashboard (NOVO)
+    path('heatmap/', views.heatmap_dashboard, name='heatmap'),
+
+    
     # Detalhe de uma oferta específica
     path('<slug:slug_oferta>/', views.detalhe_oferta, name='detalhe_oferta'),
     

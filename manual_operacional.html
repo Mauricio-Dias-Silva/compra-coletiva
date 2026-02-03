@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guia Operacional - Compra Coletiva AI</title>
+    <style>
+        :root {
+            --primary: #6200ea;
+            /* Roxo Premium */
+            --secondary: #00bfa5;
+            /* Verde Teal */
+            --bg: #f3f4f6;
+            --text: #1f2937;
+            --white: #ffffff;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 40px;
+            background: linear-gradient(135deg, var(--primary), #3700b3);
+            color: var(--white);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            letter-spacing: -1px;
+        }
+
+        .subtitle {
+            opacity: 0.9;
+            margin-top: 10px;
+            font-size: 1.1rem;
+        }
+
+        .card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            border-left: 5px solid var(--primary);
+        }
+
+        h2 {
+            color: var(--primary);
+            margin-top: 0;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h3 {
+            color: #4b5563;
+            margin-top: 25px;
+            font-size: 1.1rem;
+        }
+
+        ul,
+        ol {
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 99px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .tag-green {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .tag-yellow {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .tag-red {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .alert {
+            background: #eff6ff;
+            border-left: 4px solid #3b82f6;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 0 4px 4px 0;
+        }
+
+        code {
+            background: #e5e7eb;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            color: #c026d3;
+        }
+
+        .steps {
+            counter-reset: step;
+            list-style: none;
+            padding: 0;
+        }
+
+        .steps li {
+            position: relative;
+            padding-left: 50px;
+            margin-bottom: 20px;
+        }
+
+        .steps li::before {
+            counter-increment: step;
+            content: counter(step);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 35px;
+            height: 35px;
+            background: var(--secondary);
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 35px;
+            font-weight: bold;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <header>
+            <h1>🛒 Guia do Piloto</h1>
+            <div class="subtitle">Manual Operacional - Compra Coletiva AI</div>
+        </header>
+
+        <div class="card">
+            <h2>1. A Lógica do Negócio</h2>
+            <p>O sistema foi desenhado para vender de duas formas simultâneas. Entenda a diferença para lucrar mais:</p>
+            <ul>
+                <li><strong>Venda Unitária (Varejo):</strong> Funciona como um e-commerce comum. O cliente compra, paga
+                    e recebe o cupom na hora.</li>
+                <li><strong>Compra Coletiva (Atacado/Lote):</strong> O "Pulo do Gato". Você vende packs fechados (ex:
+                    uma caixa de detergente com 12 unidades) fracionados para vários vizinhos.</li>
+            </ul>
+            <div class="alert">
+                <strong>💡 O Segredo:</strong> A venda do Lote só é confirmada quando o grupo atinge a meta (ex: 12
+                compradores). Se não bater a meta, o dinheiro volta.
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>2. Criando Ofertas com IA 👁️</h2>
+            <p>Esqueça digitar produtos manualmente. Use a Inteligência Artificial para cadastrar ofertas em segundos.
+            </p>
+
+            <ol class="steps">
+                <li>Acesse o Painel Administrativo: <code>/admin/ofertas/oferta/</code></li>
+                <li>Clique no botão roxo <strong>"Importar Encarte/Foto"</strong>.</li>
+                <li>Faça o <strong>Upload da Foto</strong> (prateleira do mercado ou encarte PDF).</li>
+                <li>A IA vai ler o Nome, Descrição e Preço automaticamente.</li>
+                <li>Revise os dados e, se estiver tudo certo, altere o status para <strong>Ativa</strong> e marque
+                    <strong>Publicada</strong>.</li>
+            </ol>
+        </div>
+
+        <div class="card">
+            <h2>3. Gerenciando Pedidos e Pagamentos</h2>
+            <p>Acompanhe o dinheiro entrando em <code>/admin/compras/compra/</code>.</p>
+
+            <h3>Status Fundamentais:</h3>
+            <ul>
+                <li><span class="tag tag-green">Aprovada</span> <strong>Dinheiro no Bolso:</strong> Pagamento confirmado
+                    e cupom gerado.</li>
+                <li><span class="tag tag-yellow">Aguardando Lote</span> <strong>No Limbo:</strong> O cliente pagou
+                    (bloqueio no cartão), mas o grupo ainda não fechou a caixa. Se o lote fechar, vira "Aprovada".</li>
+                <li><span class="tag tag-red">Lote Cancelado</span> <strong>Falha:</strong> A meta do grupo não foi
+                    atingida no prazo. O sistema cancela a compra.</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>4. Marketplace (Vendedores Externos)</h2>
+            <p>Transforme seu site num "Uber de Ofertas".</p>
+            <ol class="steps">
+                <li>O vendedor se cadastra em <code>/contas/seja-vendedor/</code>.</li>
+                <li>Você recebe o cadastro em <code>/admin/ofert as/vendedor/</code> com status
+                    <strong>Pendente</strong>.</li>
+                <li>Você analisa e muda para <strong>Aprovado</strong>.</li>
+                <li>O vendedor ganha acesso ao painel dele para criar as próprias ofertas.</li>
+            </ol>
+        </div>
+
+        <div class="card">
+            <h2>5. Dicas de Ouro 🏆</h2>
+            <ul>
+                <li><strong>Margem de Segurança:</strong> Ao importar via IA, sempre coloque uma margem (ex: 20%) acima
+                    do preço de custo para cobrir taxas do cartão.</li>
+                <li><strong>Grupos de WhatsApp:</strong> O sistema tem botões de compartilhamento. Jogue o link do lote
+                    no grupo do condomínio para fechar a caixa rápido.</li>
+                <li><strong>Fotos Reais:</strong> Fotos de prateleira vendem mais que fotos de estúdio porque passam a
+                    sensação de "oportunidade única agora".</li>
+            </ul>
+        </div>
+
+        <footer>
+            <p>Gerado pelo Codex-IA • Documentação Oficial</p>
+        </footer>
+    </div>
+
+</body>
+
+</html>

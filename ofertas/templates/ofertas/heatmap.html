@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="heatmap-container" style="padding: 40px; background-color: #1a1a1a; min-height: 100vh; color: #fff;">
+    <div class="header" style="text-align: center; margin-bottom: 50px;">
+        <h1 style="font-size: 3.5rem; font-weight: 800; letter-spacing: -1px; margin-bottom: 10px;">
+            <span style="color: #e74c3c;">🔥 Deal</span> Heatmap
+        </h1>
+        <p style="font-size: 1.2rem; color: #888;">Acompanhe em tempo real as ofertas que estão "desbloqueando".</p>
+    </div>
+
+    <div class="heatmap-grid"
+        style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px;">
+        {% for deal in deals %}
+        <div class="deal-card {{ deal.heatmap_class }}"
+            style="background: #2d2d2d; border-radius: 12px; overflow: hidden; position: relative; transition: transform 0.3s;">
+            <!-- Badge de Temperatura -->
+            <div class="badge"
+                style="position: absolute; top: 15px; right: 15px; background: {{ deal.heatmap_color }}; color: #fff; padding: 5px 10px; border-radius: 20px; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 10;">
+                {{ deal.heatmap_icon }} {{ deal.progress_percent }}%
+            </div>
+
+            <div class="card-img"
+                style="height: 200px; background-image: url('{% if deal.imagem_principal %}{{ deal.imagem_principal.url }}{% else %}https://via.placeholder.com/400x200?text=Sem+Imagem{% endif %}'); background-size: cover; background-position: center; filter: brightness(0.8);">
+            </div>
+
+            <div class="card-body" style="padding: 20px;">
+                <h3
+                    style="margin-top: 0; font-size: 1.4rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                    {{ deal.titulo }}</h3>
+                <p style="color: #bbb; font-size: 0.9rem;">{{ deal.vendedor.nome_empresa }}</p>
+
+                <div class="stats"
+                    style="margin: 20px 0; display: flex; justify-content: space-between; align-items: flex-end;">
+                    <div>
+                        <div style="font-size: 0.8rem; color: #888;">Progresso</div>
+                        <div style="font-size: 1.2rem; font-weight: bold;">
+                            {{ deal.quantidade_vendida }} <span
+                                style="font-size: 0.8rem; font-weight: normal; color: #666;">/ {{
+                                deal.quantidade_minima_ativacao }}</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.8rem; color: #888;">Preço Lote</div>
+                        <div style="font-size: 1.4rem; color: #2ecc71; font-weight: bold;">R$ {{ deal.preco_desconto }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="progress-container"
+                    style="background: #444; height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 20px;">
+                    <div class="progress-bar"
+                        style="width: {{ deal.display_percent }}%; background: {{ deal.heatmap_color }}; height: 100%; transition: width 1s ease-in-out;">
+                    </div>
+                </div>
+
+                <a href="{{ deal.get_absolute_url }}" class="btn-join"
+                    style="display: block; text-align: center; background: {{ deal.heatmap_color }}; color: #fff; text-decoration: none; padding: 12px; border-radius: 6px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; transition: 0.2s;">
+                    Entrar no Grupo
+                </a>
+            </div>
+        </div>
+        {% empty %}
+        <div style="grid-column: 1 / -1; text-align: center; padding: 50px; color: #666;">
+            <h2>❄️ Nenhuma oferta coletiva ativa no momento.</h2>
+            <p>Volte mais tarde ou crie um novo grupo!</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    .deal-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .btn-join:hover {
+        filter: brightness(1.1);
+    }
+</style>
+{% endblock %}
