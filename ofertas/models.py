@@ -36,6 +36,13 @@ class Vendedor(models.Model):
     data_cadastro: models.DateTimeField = models.DateTimeField(auto_now_add=True)
     data_atualizacao: models.DateTimeField = models.DateTimeField(auto_now=True)
 
+    # === MONETIZAÇÃO ===
+    comissao_percentual = models.DecimalField(
+        max_digits=5, decimal_places=2, default=10.00,
+        verbose_name="Comissão (%)",
+        help_text="Percentual da plataforma sobre cada venda deste vendedor"
+    )
+
     class Meta:
         verbose_name: str = "Vendedor"
         verbose_name_plural: str = "Vendedores"

@@ -1,4 +1,4 @@
-{# templates/base.html #}
+{# templates/base.html — VarejoUnido Sales-First Design #}
 {% load static %}
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -6,139 +6,599 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {# Título Dinâmico #}
-    <title>{% block seo_title %}{% block titulo_pagina %}VarejoUnido{% endblock titulo_pagina %}{% endblock seo_title %}
-    </title>
 
-    {# Metatag de Descrição Dinâmica #}
+    {# === SEO COMPLETO === #}
+    <title>{% block seo_title %}{% block titulo_pagina %}VarejoUnido — Ofertas Exclusivas & Compra Coletiva{% endblock
+        titulo_pagina %}{% endblock seo_title %}</title>
     <meta name="description"
-        content="{% block seo_description %}VarejoUnido: Sua plataforma de compras online com ofertas exclusivas e o poder da compra coletiva para você economizar muito mais!{% endblock seo_description %}">
-
-    {# Metatag de Palavras-chave Dinâmica (ou padrão) #}
+        content="{% block seo_description %}VarejoUnido: Economize até 70% com compra coletiva e ofertas exclusivas. Junte-se a milhares de compradores inteligentes!{% endblock seo_description %}">
     <meta name="keywords"
-        content="{% block seo_keywords %}varejounido, compra coletiva, e-commerce, ofertas, descontos, promoções, loja online, varejo, marketplace{% endblock seo_keywords %}">
+        content="{% block seo_keywords %}varejounido, compra coletiva, ofertas, descontos, promoções, marketplace, e-commerce, economia, loja online, cupons, cashback{% endblock seo_keywords %}">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="VarejoUnido">
+    <link rel="canonical" href="{{ request.build_absolute_uri }}">
 
-    {# Open Graph Tags (para compartilhamento em redes sociais como Facebook/WhatsApp) #}
+    {# Open Graph #}
     <meta property="og:title"
-        content="{% block og_title %}{% block titulo_pagina_og %}VarejoUnido{% endblock titulo_pagina_og %}{% endblock og_title %}" />
+        content="{% block og_title %}{% block titulo_pagina_og %}VarejoUnido — Ofertas Exclusivas{% endblock titulo_pagina_og %}{% endblock og_title %}" />
     <meta property="og:description"
-        content="{% block og_description %}VarejoUnido: Sua plataforma de compras online com ofertas exclusivas e o poder da compra coletiva para você economizar muito mais!{% endblock og_description %}" />
+        content="{% block og_description %}Economize até 70% com compra coletiva e ofertas exclusivas no VarejoUnido!{% endblock og_description %}" />
     <meta property="og:image"
-        content="{% block og_image %}{% static 'img/social_share_default.jpg' %}{% endblock og_image %}" /> {# Imagem
-    padrão para compartilhamento #}
+        content="{% block og_image %}{% static 'img/social_share_default.jpg' %}{% endblock og_image %}" />
     <meta property="og:url" content="{% block og_url %}{{ request.build_absolute_uri }}{% endblock og_url %}" />
     <meta property="og:type" content="{% block og_type %}website{% endblock og_type %}" />
+    <meta property="og:site_name" content="VarejoUnido" />
+    <meta property="og:locale" content="pt_BR" />
 
+    {# Twitter Card #}
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="VarejoUnido — Ofertas Exclusivas">
+    <meta name="twitter:description" content="Economize até 70% com compra coletiva!">
+
+    {# Structured Data (JSON-LD) — Google Rich Results #}
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "VarejoUnido",
+        "url": "{{ request.scheme }}://{{ request.get_host }}",
+        "description": "Plataforma de compra coletiva e ofertas exclusivas",
+        "potentialAction": {
+            "@type": "SearchAction",
+            "target": "{{ request.scheme }}://{{ request.get_host }}/ofertas/?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+        }
+    }
+    </script>
+
+    {# Fonts & Libraries #}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
     <style>
+        /* =============================================
+           VAREJOUNIDO — PREMIUM SALES DESIGN SYSTEM
+           ============================================= */
+
+        :root {
+            --vu-primary: #FF4D00;
+            --vu-primary-dark: #E04400;
+            --vu-primary-light: #FF7A3D;
+            --vu-secondary: #1A1A2E;
+            --vu-accent: #FFD600;
+            --vu-accent-dark: #E6C100;
+            --vu-success: #00C853;
+            --vu-bg: #FAFAFA;
+            --vu-surface: #FFFFFF;
+            --vu-text: #1A1A2E;
+            --vu-text-muted: #6B7280;
+            --vu-border: #E5E7EB;
+            --vu-gradient: linear-gradient(135deg, #FF4D00 0%, #FF8A00 100%);
+            --vu-gradient-dark: linear-gradient(135deg, #1A1A2E 0%, #16213E 50%, #0F3460 100%);
+            --vu-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+            --vu-shadow-md: 0 4px 14px rgba(0, 0, 0, 0.1);
+            --vu-shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.12);
+            --vu-radius: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Outfit', sans-serif;
             display: flex;
             flex-direction: column;
             min-height: 100vh;
-            background-color: #f8f9fa;
+            background-color: var(--vu-bg);
+            color: var(--vu-text);
+            -webkit-font-smoothing: antialiased;
         }
 
         .content-wrapper {
             flex: 1;
         }
 
-        /* Card Premium Polish */
+        /* === TOP BAR (Promoção) === */
+        .top-bar {
+            background: var(--vu-gradient);
+            color: white;
+            text-align: center;
+            padding: 8px 0;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            animation: pulse-bar 3s ease-in-out infinite;
+        }
+
+        .top-bar i {
+            animation: bounce-icon 1.5s infinite;
+        }
+
+        @keyframes pulse-bar {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.92;
+            }
+        }
+
+        @keyframes bounce-icon {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-3px);
+            }
+        }
+
+        /* === NAVBAR PREMIUM === */
+        .navbar-vu {
+            background: var(--vu-secondary) !important;
+            padding: 12px 0;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.15);
+            position: sticky;
+            top: 0;
+            z-index: 1030;
+        }
+
+        .navbar-vu .navbar-brand {
+            font-weight: 800;
+            font-size: 1.5rem;
+            letter-spacing: -0.5px;
+            color: white !important;
+        }
+
+        .navbar-vu .navbar-brand span {
+            color: var(--vu-primary);
+        }
+
+        .navbar-vu .nav-link {
+            color: rgba(255, 255, 255, 0.85) !important;
+            font-weight: 500;
+            font-size: 0.95rem;
+            padding: 8px 16px !important;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .navbar-vu .nav-link:hover,
+        .navbar-vu .nav-link.active {
+            color: white !important;
+            background: rgba(255, 77, 0, 0.15);
+        }
+
+        .navbar-vu .btn-sell {
+            background: var(--vu-gradient);
+            color: white !important;
+            border: none;
+            font-weight: 600;
+            padding: 8px 20px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-vu .btn-sell:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(255, 77, 0, 0.4);
+        }
+
+        /* === SEARCH BAR === */
+        .search-bar-vu {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+            max-width: 400px;
+        }
+
+        .search-bar-vu input {
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            font-size: 0.9rem;
+        }
+
+        .search-bar-vu input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .search-bar-vu input:focus {
+            outline: none;
+            box-shadow: none;
+        }
+
+        .search-bar-vu .btn {
+            background: var(--vu-primary);
+            border: none;
+            color: white;
+            padding: 8px 14px;
+        }
+
+        /* === CARDS DE OFERTA (Sales-Style) === */
         .card {
             border: none;
-            border-radius: 12px;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border-radius: var(--vu-radius);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             overflow: hidden;
-            /* For image scaling */
+            background: var(--vu-surface);
+            box-shadow: var(--vu-shadow-sm);
         }
 
         .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+            transform: translateY(-6px);
+            box-shadow: var(--vu-shadow-lg);
         }
 
         .card-img-top {
             transition: transform 0.5s ease;
+            aspect-ratio: 4/3;
+            object-fit: cover;
         }
 
         .card:hover .card-img-top {
-            transform: scale(1.05);
-            /* Subtle zoom */
+            transform: scale(1.06);
         }
 
-        /* Badges */
-        .badge {
-            padding: 0.5em 0.8em;
+        /* Discount Badge */
+        .badge-desconto {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: var(--vu-primary);
+            color: white;
+            font-weight: 700;
+            font-size: 0.95rem;
+            padding: 6px 12px;
+            border-radius: 8px;
+            z-index: 2;
+            box-shadow: 0 2px 8px rgba(255, 77, 0, 0.3);
+        }
+
+        /* Lot Badge */
+        .badge-lote {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: var(--vu-accent);
+            color: var(--vu-secondary);
+            font-weight: 700;
+            font-size: 0.75rem;
+            padding: 5px 10px;
             border-radius: 6px;
+            z-index: 2;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .preco-original {
+            text-decoration: line-through;
+            color: var(--vu-text-muted);
+            font-size: 0.85rem;
+        }
+
+        .preco-desconto {
+            color: var(--vu-primary);
+            font-weight: 800;
+            font-size: 1.4rem;
+        }
+
+        /* === BUTTONS === */
+        .btn-vu-primary {
+            background: var(--vu-gradient);
+            color: white;
+            border: none;
+            font-weight: 600;
+            padding: 12px 28px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .btn-vu-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 77, 0, 0.35);
+            color: white;
+        }
+
+        .btn-vu-secondary {
+            background: var(--vu-secondary);
+            color: white;
+            border: none;
+            font-weight: 600;
+            padding: 12px 28px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-vu-secondary:hover {
+            background: #16213E;
+            transform: translateY(-1px);
+            color: white;
+        }
+
+        .btn-vu-outline {
+            background: transparent;
+            color: var(--vu-primary);
+            border: 2px solid var(--vu-primary);
+            font-weight: 600;
+            padding: 10px 24px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-vu-outline:hover {
+            background: var(--vu-primary);
+            color: white;
+        }
+
+        /* === BADGES === */
+        .badge {
+            padding: 0.5em 0.9em;
+            border-radius: 8px;
             font-weight: 600;
         }
 
-        /* Estilos para o Footer */
-        .footer {
-            background-color: #212529;
-            color: #f8f9fa;
-            padding: 40px 0;
+        .badge-selo {
+            background: linear-gradient(135deg, #FFD600, #FFA000);
+            color: #1A1A2E;
+            font-size: 0.7rem;
+        }
+
+        /* === URGENCY BAR (compra coletiva) === */
+        .progress-lote {
+            height: 8px;
+            border-radius: 4px;
+            background: #E5E7EB;
+            overflow: hidden;
+        }
+
+        .progress-lote .progress-bar {
+            background: var(--vu-gradient);
+            border-radius: 4px;
+            transition: width 1s ease;
+        }
+
+        /* === TRUST BADGES === */
+        .trust-bar {
+            background: var(--vu-surface);
+            border-top: 1px solid var(--vu-border);
+            border-bottom: 1px solid var(--vu-border);
+            padding: 16px 0;
+        }
+
+        .trust-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: var(--vu-text-muted);
+            font-weight: 500;
+        }
+
+        .trust-item i {
+            font-size: 1.3rem;
+            color: var(--vu-success);
+        }
+
+        /* === CATEGORY PILLS === */
+        .cat-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 18px;
+            border-radius: 30px;
+            background: var(--vu-surface);
+            border: 1.5px solid var(--vu-border);
+            color: var(--vu-text);
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .cat-pill:hover,
+        .cat-pill.active {
+            background: var(--vu-primary);
+            border-color: var(--vu-primary);
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        /* === NOTIFICATIONS DOT === */
+        .notif-badge {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            width: 18px;
+            height: 18px;
+            background: var(--vu-primary);
+            color: white;
+            border-radius: 50%;
+            font-size: 0.65rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            border: 2px solid var(--vu-secondary);
+        }
+
+        /* === FOOTER PREMIUM === */
+        .footer-vu {
+            background: var(--vu-gradient-dark);
+            color: rgba(255, 255, 255, 0.8);
+            padding: 60px 0 30px;
             margin-top: 5rem;
         }
 
-        .footer h5 {
-            color: #007bff;
+        .footer-vu h5 {
+            color: var(--vu-primary);
             margin-bottom: 20px;
-            font-weight: bold;
+            font-weight: 700;
+            font-size: 1.1rem;
         }
 
-        .footer a {
-            color: #adb5bd;
+        .footer-vu a {
+            color: rgba(255, 255, 255, 0.6);
             text-decoration: none;
-            transition: color 0.2s;
+            transition: all 0.2s;
+            font-size: 0.9rem;
         }
 
-        .footer a:hover {
-            color: #007bff;
-            text-decoration: none;
+        .footer-vu a:hover {
+            color: var(--vu-primary);
+            padding-left: 4px;
         }
 
-        .footer .social-icons a {
+        .footer-vu .social-icons a {
             font-size: 1.5rem;
             margin: 0 10px;
-            color: #adb5bd;
-            transition: color 0.2s;
+            color: rgba(255, 255, 255, 0.5);
+            transition: all 0.3s;
         }
 
-        .footer .social-icons a:hover {
-            color: #0d6efd;
-            transform: scale(1.2);
+        .footer-vu .social-icons a:hover {
+            color: var(--vu-primary);
+            transform: scale(1.2) translateY(-2px);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 20px;
+            margin-top: 40px;
+        }
+
+        /* === COUNTDOWN TIMER === */
+        .countdown-box {
+            display: inline-flex;
+            gap: 4px;
+            align-items: center;
+            background: rgba(255, 77, 0, 0.1);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--vu-primary);
+        }
+
+        /* === ALERTS OVERRIDE === */
+        .alert {
+            border-radius: 12px;
+            border: none;
+        }
+
+        .alert-success {
+            background: #ECFDF5;
+            color: #065F46;
+        }
+
+        .alert-danger {
+            background: #FEF2F2;
+            color: #991B1B;
+        }
+
+        .alert-warning {
+            background: #FFFBEB;
+            color: #92400E;
+        }
+
+        .alert-info {
+            background: #EFF6FF;
+            color: #1E40AF;
+        }
+
+        /* === SKELETON (loading) === */
+        @keyframes shimmer {
+            0% {
+                background-position: -200px 0;
+            }
+
+            100% {
+                background-position: calc(200px + 100%) 0;
+            }
+        }
+
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200px 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 8px;
+        }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 768px) {
+            .top-bar {
+                font-size: 0.75rem;
+                padding: 6px 12px;
+            }
+
+            .navbar-vu .navbar-brand {
+                font-size: 1.2rem;
+            }
+
+            .preco-desconto {
+                font-size: 1.2rem;
+            }
+
+            .footer-vu {
+                padding: 40px 0 20px;
+            }
         }
     </style>
     {% block extras_css %}{% endblock extras_css %}
 </head>
 
 <body>
-    {# ... restante do base.html ... #}
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    {# === TOP PROMO BAR === #}
+    <div class="top-bar">
+        <i class="bi bi-fire me-1"></i>
+        <strong>FRETE GRÁTIS</strong> em pedidos acima de R$99 &bull;
+        Use o código <strong>BEMVINDO10</strong> e ganhe 10% OFF na primeira compra!
+        <i class="bi bi-fire ms-1"></i>
+    </div>
+
+    {# === NAVBAR === #}
+    <nav class="navbar navbar-expand-lg navbar-vu">
         <div class="container">
-            <a class="navbar-brand" href="{% url 'ofertas:lista_ofertas' %}">VarejoUnido</a>
+            <a class="navbar-brand" href="{% url 'ofertas:lista_ofertas' %}">
+                <i class="bi bi-bag-heart-fill me-1"></i>Varejo<span>Unido</span>
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
+                {# Search #}
+                <form class="d-flex search-bar-vu mx-lg-4 my-2 my-lg-0" method="get"
+                    action="{% url 'ofertas:lista_ofertas' %}">
+                    <input type="text" name="q" class="form-control" placeholder="Buscar ofertas..."
+                        value="{{ query_busca|default:'' }}">
+                    <button type="submit" class="btn"><i class="bi bi-search"></i></button>
+                </form>
+
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
                         <a class="nav-link {% if not apenas_lote and not categoria_selecionada and not query_busca %}active{% endif %}"
-                            aria-current="page" href="{% url 'ofertas:lista_ofertas' %}">Home</a> {# ATUALIZADO AQUI #}
+                            href="{% url 'ofertas:lista_ofertas' %}"><i class="bi bi-house-door me-1"></i>Início</a>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownCategorias" role="button"
                             data-bs-toggle="dropdown" aria-expanded="false">
-                            Categorias
+                            <i class="bi bi-grid me-1"></i>Categorias
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdownCategorias">
-                            <li><a class="dropdown-item" href="{% url 'ofertas:lista_ofertas' %}">Todas as
-                                    Categorias</a></li> {# ATUALIZADO AQUI #}
+                            <li><a class="dropdown-item" href="{% url 'ofertas:lista_ofertas' %}">Todas</a></li>
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
@@ -150,49 +610,76 @@
                         </ul>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'ofertas:compre_junto' %}">Compre Junto!</a>
+                        <a class="nav-link" href="{% url 'ofertas:compre_junto' %}">
+                            <i class="bi bi-people-fill me-1"></i>Compre Junto!
+                            <span class="badge bg-warning text-dark ms-1" style="font-size: 0.65rem;">HOT</span>
+                        </a>
                     </li>
-                    {% if user.is_authenticated and user.eh_vendedor_ou_associado %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'vendedores_painel:dashboard' %}">Painel do Vendedor</a>
-                    </li>
-                    {% endif %}
                 </ul>
+
                 <ul class="navbar-nav">
                     {% if user.is_authenticated %}
+                    {# Notifications #}
+                    {% if notificacoes_nao_lidas > 0 %}
+                    <li class="nav-item position-relative me-2">
+                        <a class="nav-link" href="#"><i class="bi bi-bell fs-5"></i>
+                            <span class="notif-badge">{{ notificacoes_nao_lidas }}</span>
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    {# User Menu #}
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownUser" role="button"
                             data-bs-toggle="dropdown" aria-expanded="false">
-                            Olá, {{ user.username }}!
+                            <i class="bi bi-person-circle me-1"></i>{{ user.username }}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownUser">
-                            {# Links de perfil/conta do allauth #}
-                            <li><a class="dropdown-item" href="{% url 'account_email' %}">Gerenciar E-mail</a></li>
-                            <li><a class="dropdown-item" href="{% url 'account_change_password' %}">Mudar Senha</a></li>
-
-                            {# Links de cupons e pedidos do seu projeto #}
-                            <li><a class="dropdown-item" href="{% url 'compras:meus_cupons' %}">Meus Cupons
-                                    (Unidade)</a></li>
-                            <li><a class="dropdown-item" href="{% url 'pedidos_coletivos:meus_pedidos' %}">Meus Pedidos
-                                    Coletivos</a></li>
-                            <li><a class="dropdown-item" href="{% url 'pedidos_coletivos:meu_credito' %}">Meu Crédito:
-                                    R$ {{ user.credito_site.saldo|floatformat:2|default:"0.00" }}</a></li>
-                            {% if not user.vendedor %} {# Mostra este link apenas se o usuário NÃO for vendedor #}
-                            <li><a class="dropdown-item" href="{% url 'contas:cadastro_vendedor' %}">Seja um
-                                    Vendedor!</a></li>
+                            <li><a class="dropdown-item" href="{% url 'compras:meus_cupons' %}"><i
+                                        class="bi bi-ticket-perforated me-2"></i>Meus Cupons</a></li>
+                            <li><a class="dropdown-item" href="{% url 'pedidos_coletivos:meus_pedidos' %}"><i
+                                        class="bi bi-box-seam me-2"></i>Meus Pedidos</a></li>
+                            <li><a class="dropdown-item" href="{% url 'pedidos_coletivos:meu_credito' %}"><i
+                                        class="bi bi-wallet2 me-2"></i>Crédito: R$ {{
+                                    user.credito_site.saldo|floatformat:2|default:"0.00" }}</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="{% url 'account_email' %}"><i
+                                        class="bi bi-envelope me-2"></i>E-mail</a></li>
+                            <li><a class="dropdown-item" href="{% url 'account_change_password' %}"><i
+                                        class="bi bi-key me-2"></i>Senha</a></li>
+                            {% if not user.vendedor %}
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item text-primary fw-bold"
+                                    href="{% url 'contas:cadastro_vendedor' %}"><i class="bi bi-shop me-2"></i>Vender no
+                                    VarejoUnido</a></li>
                             {% endif %}
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
-                            <li><a class="dropdown-item" href="{% url 'account_logout' %}">Sair</a></li>
+                            <li><a class="dropdown-item text-danger" href="{% url 'account_logout' %}"><i
+                                        class="bi bi-box-arrow-right me-2"></i>Sair</a></li>
                         </ul>
                     </li>
+
+                    {% if user.is_authenticated and user.eh_vendedor_ou_associado %}
+                    <li class="nav-item ms-2">
+                        <a class="btn btn-sell" href="{% url 'vendedores_painel:dashboard' %}"><i
+                                class="bi bi-shop-window me-1"></i>Painel Vendedor</a>
+                    </li>
+                    {% endif %}
+
                     {% else %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'account_login' %}">Entrar</a>
+                        <a class="nav-link" href="{% url 'account_login' %}"><i
+                                class="bi bi-box-arrow-in-right me-1"></i>Entrar</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'account_signup' %}">Cadastrar</a>
+                    <li class="nav-item ms-2">
+                        <a class="btn btn-sell" href="{% url 'account_signup' %}"><i
+                                class="bi bi-person-plus me-1"></i>Cadastrar</a>
                     </li>
                     {% endif %}
                 </ul>
@@ -200,10 +687,45 @@
         </div>
     </nav>
 
+    {# === TRUST BAR === #}
+    <div class="trust-bar d-none d-md-block">
+        <div class="container">
+            <div class="row text-center">
+                <div class="col-md-3">
+                    <div class="trust-item justify-content-center">
+                        <i class="bi bi-shield-check"></i>
+                        <span>Compra 100% Segura</span>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="trust-item justify-content-center">
+                        <i class="bi bi-truck"></i>
+                        <span>Frete Grátis +R$99</span>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="trust-item justify-content-center">
+                        <i class="bi bi-arrow-counterclockwise"></i>
+                        <span>Devolução Fácil</span>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="trust-item justify-content-center">
+                        <i class="bi bi-credit-card"></i>
+                        <span>Até 12x sem juros</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# === CONTENT === #}
     <div class="container content-wrapper mt-4">
         {% if messages %}
         {% for message in messages %}
         <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            <i
+                class="bi {% if message.tags == 'success' %}bi-check-circle{% elif message.tags == 'error' or message.tags == 'danger' %}bi-exclamation-triangle{% else %}bi-info-circle{% endif %} me-2"></i>
             {{ message }}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
@@ -213,37 +735,53 @@
         {% block conteudo %}{% endblock conteudo %}
     </div>
 
-
-    <footer class="footer mt-auto">
+    {# === FOOTER === #}
+    <footer class="footer-vu mt-auto">
         <div class="container">
             <div class="row">
                 <div class="col-md-4 mb-4 mb-md-0">
-                    <h5>Sobre o VarejoUnido</h5>
-                    <p class="text-muted">Sua plataforma completa de compras online, unindo as melhores ofertas do
-                        varejo tradicional com o poder da compra coletiva para você economizar como nunca!</p>
+                    <h5><i class="bi bi-bag-heart-fill me-2"></i>VarejoUnido</h5>
+                    <p>A plataforma que une o poder da compra coletiva com ofertas exclusivas do varejo. Economize até
+                        70% comprando junto com milhares de pessoas!</p>
+                    <div class="social-icons mt-3">
+                        <a href="#" target="_blank"><i class="bi bi-facebook"></i></a>
+                        <a href="#" target="_blank"><i class="bi bi-instagram"></i></a>
+                        <a href="#" target="_blank"><i class="bi bi-whatsapp"></i></a>
+                        <a href="#" target="_blank"><i class="bi bi-youtube"></i></a>
+                        <a href="#" target="_blank"><i class="bi bi-tiktok"></i></a>
+                    </div>
                 </div>
-                <div class="col-md-4 mb-4 mb-md-0">
-                    <h5>Links Rápidos</h5>
+                <div class="col-md-2 mb-4 mb-md-0">
+                    <h5>Para Você</h5>
                     <ul class="list-unstyled">
-                        <li><a href="{% url 'ofertas:lista_ofertas' %}">Home</a></li>
-                        <li><a href="{% url 'ofertas:compre_junto' %}">Compre Junto!</a></li>
-                        <li><a href="{% url 'ofertas:lista_ofertas' %}">Todas as Ofertas</a></li>
-                        <li><a href="#">Contato</a></li>
-                        <li><a href="#">Termos de Uso</a></li>
+                        <li class="mb-2"><a href="{% url 'ofertas:lista_ofertas' %}">Ofertas</a></li>
+                        <li class="mb-2"><a href="{% url 'ofertas:compre_junto' %}">Compre Junto!</a></li>
+                        <li class="mb-2"><a href="#">Como Funciona</a></li>
+                        <li class="mb-2"><a href="#">Ajuda / FAQ</a></li>
                     </ul>
                 </div>
-                <div class="col-md-4">
-                    <h5>Conecte-se</h5>
-                    <p class="text-muted">Siga-nos nas redes sociais para não perder nenhuma oferta!</p>
-                    <div class="social-icons">
-                        <a href="#" target="_blank" class="text-light me-2"><i class="bi bi-facebook"></i></a>
-                        <a href="#" target="_blank" class="text-light me-2"><i class="bi bi-instagram"></i></a>
-                        <a href="#" target="_blank" class="text-light me-2"><i class="bi bi-twitter"></i></a>
-                        <a href="#" target="_blank" class="text-light me-2"><i class="bi bi-linkedin"></i></a>
-                    </div>
-                    <p class="text-muted mt-3 mb-0">&copy; {% now "Y" %} VarejoUnido. Todos os direitos reservados.</p>
-                    {# Atualizado para ano dinâmico #}
+                <div class="col-md-3 mb-4 mb-md-0">
+                    <h5>Para Vendedores</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="{% url 'contas:cadastro_vendedor' %}">Vender no VarejoUnido</a></li>
+                        <li class="mb-2"><a href="#">Planos & Preços</a></li>
+                        <li class="mb-2"><a href="#">Central do Vendedor</a></li>
+                    </ul>
                 </div>
+                <div class="col-md-3">
+                    <h5>Institucional</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#">Sobre Nós</a></li>
+                        <li class="mb-2"><a href="#">Termos de Uso</a></li>
+                        <li class="mb-2"><a href="#">Política de Privacidade</a></li>
+                        <li class="mb-2"><a href="#">Contato</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom text-center">
+                <p class="mb-1" style="font-size: 0.85rem;">&copy; {% now "Y" %} VarejoUnido — Todos os direitos
+                    reservados.</p>
+                <p class="mb-0" style="font-size: 0.75rem; opacity: 0.5;">Powered by PythonJet</p>
             </div>
         </div>
     </footer>
