@@ -1,44 +1,34 @@
-﻿﻿# --- Core Django & Config ---
-Django==5.1.4
-python-decouple==3.8        # Substitui o decouple para alinhar com o settings
-gunicorn==23.0.0        # Servidor Web
-google-generativeai     # AI Vision (Scanner de Encartes)
-# --- API Rest (Nomes Corrigidos) ---
-djangorestframework
-djangorestframework-simplejwt
-django-cors-headers
-# --- Banco de Dados (PostgreSQL) ---
-psycopg2-binary         # O driver correto para o PythonJet
-dj-database-url==3.0.1  # Conexão automática
-# --- Estáticos e Mídia ---
-# --- Estáticos e Mídia ---
-pillow==11.3.0          # Para imagens
-django-storages[google] # Google Cloud Storage
-google-cloud-storage    # Google Cloud Storage Lib
-# --- Autenticação ---
+﻿﻿Django>=5.0
+python-decouple==3.8
+gunicorn==20.1.0
+google-generativeai
+djangorestframework==3.16.0
+djangorestframework-simplejwt==5.5.1
+django-cors-headers==4.9.0
+psycopg2-binary==2.9.9
+dj-database-url==2.0.0
+pillow==11.3.0
+django-storages[google]==1.14.6
+google-cloud-storage==3.7.0
 django-allauth==65.10.0
 python3-openid==3.2.0
 requests-oauthlib==2.0.0
 oauthlib==3.3.1
 PyJWT==2.10.1
-cryptography==45.0.5
-# --- Pagamentos ---
+cryptography==46.0.3
 mercadopago==2.3.0
 requests==2.32.4
-urllib3==2.5.0
+urllib3==2.3.0
 certifi==2025.7.14
 idna==3.10
 charset-normalizer==3.4.2
-# --- Tarefas (Celery) ---
 celery==5.5.3
 kombu==5.5.4
 amqp==5.3.1
 billiard==4.2.1
 vine==5.1.0
-# --- PDF (Relatórios) ---
-WeasyPrint
-reportlab
-# --- Dependências Gerais ---
+weasyprint==66.0
+reportlab==4.0.4
 asgiref==3.9.1
 sqlparse==0.5.3
 tzdata==2025.2
@@ -51,5 +41,5 @@ colorama==0.4.6
 defusedxml==0.7.1
 wcwidth==0.2.13
 prompt_toolkit==3.0.51
-cffi==1.17.1
-whitenoise
+cffi==2.0.0
+whitenoise==6.4.0

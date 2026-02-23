@@ -107,14 +107,39 @@ TEMPLATES = [
 WSGI_APPLICATION = 'projeto_compra_coletiva.wsgi.application'
 
 # --- BANCO DE DADOS HÍBRIDO (LOCAL vs NUVEM) ---
-# Se tiver DATABASE_URL (Nuvem/PythonJet), usa Postgres.
-# Se não tiver (Local), usa SQLite.
-DATABASES = {
-    'default': dj_database_url.config(
-        default=f'sqlite:///{BASE_DIR}/db.sqlite3',
-        conn_max_age=600
-    )
-}
+CLOUD_SQL_CONNECTION_NAME = config('CLOUD_SQL_CONNECTION_NAME', default=None)
+
+if CLOUD_SQL_CONNECTION_NAME:
+    # --- PRODUÇÃO (CLOUD RUN) ---
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'HOST': f'/cloudsql/{CLOUD_SQL_CONNECTION_NAME}',
+            'NAME': config('DB_NAME', default='sysgov_db'),
+            'USER': config('DB_USER', default='postgres'),
+            'PASSWORD': config('DB_PASSWORD', default=''),
+            'PORT': '', # Porta vazia força Socket Unix na GCP
+            'CONN_MAX_AGE': 600,
+            'CONN_HEALTH_CHECKS': True,
+        }
+    }
+else:
+    # Se na nuvem via env URL, usa dj_database_url
+    if config('DATABASE_URL', default=None):
+        DATABASES = {
+            'default': dj_database_url.config(
+                default=config('DATABASE_URL'),
+                conn_max_age=600
+            )
+        }
+    else:
+        # Fallback local SQLite3
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': BASE_DIR / 'db.sqlite3',
+            }
+        }
 
 # --- ARQUIVOS ESTÁTICOS ---
 # --- ARQUIVOS ESTÁTICOS & MEDIA ---
