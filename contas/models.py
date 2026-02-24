@@ -7,6 +7,16 @@ from ofertas.models import Vendedor
 
 
 class Usuario(AbstractUser):
+    cpf = models.CharField(max_length=14, unique=True, blank=True, null=True, verbose_name="CPF")
+    telefone = models.CharField(max_length=20, blank=True, null=True, verbose_name="Telefone")
+    
+    # Endereço para NFe
+    cep = models.CharField(max_length=9, blank=True, null=True)
+    logradouro = models.CharField(max_length=255, blank=True, null=True)
+    numero = models.CharField(max_length=20, blank=True, null=True)
+    bairro = models.CharField(max_length=100, blank=True, null=True)
+    municipio = models.CharField(max_length=100, blank=True, null=True)
+    uf = models.CharField(max_length=2, blank=True, null=True)
     # ... (Seu código existente do modelo Usuario) ...
     # Garanta que o OneToOneField para Vendedor está aqui
     vendedor = models.OneToOneField(

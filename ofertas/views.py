@@ -305,3 +305,10 @@ def trigger_autonomous_agent(request):
         messages.error(request, f"Erro ao ativar agente: {str(e)}")
     
     return redirect('ofertas:lista_ofertas')
+
+@staff_member_required
+def heatmap_dashboard(request):
+    """
+    Dashboard de Heatmap para visualização de densidade de pedidos.
+    """
+    return render(request, 'ofertas/heatmap.html', {'titulo_pagina': 'Heatmap de Vendas'})

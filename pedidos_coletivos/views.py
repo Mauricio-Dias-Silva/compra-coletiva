@@ -320,22 +320,46 @@ class PedidoColetivoViewSet(viewsets.ModelViewSet):
                     return Response(detail_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
                 
                 elif valor_a_pagar_mp > 0:
-                    # Precisa pagar o restante no Mercado Pago
+                    # [REAL-PAYMENT] Mercado Pago SDK Integration
+                    import mercadopago
+                    from django.conf import settings
+                    sdk = mercadopago.SDK(settings.MERCADO_PAGO_ACCESS_TOKEN)
                     
-                    # (Aqui você chamaria a lógica do 'pagamentos' SDK
-                    # para criar a preferência de pagamento)
+                    base_url = request.build_absolute_uri('/')[:-1]
+                    success_url = f"{base_url}/pagamentos/retorno/sucesso/pedidocoletivo/{pedido.id}/"
                     
-                    # --- INÍCIO: LÓGICA SIMULADA DO MERCADO PAGO ---
-                    # (Substitua pela sua chamada real ao SDK)
-                    payment_url = "https://mercadopago.com/pagar/simulado"
-                    preference_id = f"PREF_SIMULADA_{pedido.id}"
-                    # --- FIM: LÓGICA SIMULADA ---
+                    preference_data = {
+                        "items": [
+                            {
+                                "title": f"Pedido Coletivo: {oferta.titulo}",
+                                "quantity": 1,
+                                "unit_price": float(valor_a_pagar_mp),
+                                "currency_id": "BRL",
+                            }
+                        ],
+                        "payer": {
+                            "email": request.user.email,
+                        },
+                        "external_reference": f"pedidocoletivo_{pedido.id}",
+                        "back_urls": {
+                            "success": success_url,
+                            "pending": success_url,
+                            "failure": f"{base_url}/ofertas/"
+                        },
+                        "auto_return": "all",
+                    }
+                    
+                    preference_response = sdk.preference().create(preference_data)
+                    preference = preference_response["response"]
+                    
+                    payment_url = preference.get("init_point") if not settings.DEBUG else preference.get("sandbox_init_point")
+                    preference_id = preference.get("id")
                     
                     # Salva o ID da preferência no pedido
                     pedido.id_preferencia_mp = preference_id
                     pedido.save()
 
-                    # Retorna o pedido pendente + a URL de pagamento
+                    # Retorna o pedido pendente + a URL de pagamento real
                     headers = self.get_success_headers(serializer.data)
                     detail_serializer = PedidoColetivoDetailSerializer(pedido, context={'request': request})
                     

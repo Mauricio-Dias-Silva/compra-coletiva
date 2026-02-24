@@ -58,6 +58,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/marketplace.css' %}">
 
     <style>
         /* =============================================
@@ -145,27 +146,28 @@
 
         /* === NAVBAR PREMIUM === */
         .navbar-vu {
-            background: var(--vu-secondary) !important;
-            padding: 12px 0;
-            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.15);
+            background: var(--ml-yellow) !important;
+            padding: 8px 0;
+            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
             position: sticky;
             top: 0;
             z-index: 1030;
+            border-bottom: 1px solid rgba(0, 0, 0, .1);
         }
 
         .navbar-vu .navbar-brand {
             font-weight: 800;
             font-size: 1.5rem;
             letter-spacing: -0.5px;
-            color: white !important;
+            color: var(--ml-dark) !important;
         }
 
         .navbar-vu .navbar-brand span {
-            color: var(--vu-primary);
+            color: var(--ml-blue);
         }
 
         .navbar-vu .nav-link {
-            color: rgba(255, 255, 255, 0.85) !important;
+            color: var(--ml-dark) !important;
             font-weight: 500;
             font-size: 0.95rem;
             padding: 8px 16px !important;
@@ -175,8 +177,7 @@
 
         .navbar-vu .nav-link:hover,
         .navbar-vu .nav-link.active {
-            color: white !important;
-            background: rgba(255, 77, 0, 0.15);
+            color: var(--ml-blue) !important;
         }
 
         .navbar-vu .btn-sell {
@@ -196,34 +197,35 @@
 
         /* === SEARCH BAR === */
         .search-bar-vu {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
+            background: var(--ml-white);
+            border-radius: 2px;
+            box-shadow: var(--shadow-sm);
             overflow: hidden;
-            max-width: 400px;
+            max-width: 600px;
+            flex-grow: 1;
+            display: flex;
+            border: 1px solid #fff;
         }
 
         .search-bar-vu input {
             background: transparent;
             border: none;
-            color: white;
+            color: var(--ml-dark);
             padding: 8px 16px;
             font-size: 0.9rem;
+            width: 100%;
         }
 
         .search-bar-vu input::placeholder {
-            color: rgba(255, 255, 255, 0.5);
-        }
-
-        .search-bar-vu input:focus {
-            outline: none;
-            box-shadow: none;
+            color: var(--ml-gray);
         }
 
         .search-bar-vu .btn {
-            background: var(--vu-primary);
+            background: transparent;
             border: none;
-            color: white;
+            color: var(--ml-gray);
             padding: 8px 14px;
+            border-left: 1px solid #eee;
         }
 
         /* === CARDS DE OFERTA (Sales-Style) === */

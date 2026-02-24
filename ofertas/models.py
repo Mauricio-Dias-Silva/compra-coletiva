@@ -18,11 +18,19 @@ class Vendedor(models.Model):
     ]
     nome_empresa: models.CharField = models.CharField(max_length=200, verbose_name="Nome da Empresa")
     cnpj: models.CharField = models.CharField(max_length=18, unique=True, verbose_name="CNPJ (somente números)")
+    inscricao_estadual = models.CharField(max_length=20, blank=True, null=True, verbose_name="Inscrição Estadual")
     email_contato: models.EmailField = models.EmailField(verbose_name="Email de Contato")
     telefone: models.CharField = models.CharField(max_length=20, blank=True, null=True, verbose_name="Telefone")
     descricao: models.TextField = models.TextField(blank=True, null=True, verbose_name="Descrição da Empresa")
     logo: models.ImageField = models.ImageField(upload_to='vendedores/logos/', blank=True, null=True, verbose_name="Logo do Vendedor")
-    endereco: models.CharField = models.CharField(max_length=255, verbose_name="Endereço Completo")
+    
+    # Endereço Estruturado para NFe
+    cep = models.CharField(max_length=9, default="00000-000", verbose_name="CEP")
+    endereco: models.CharField = models.CharField(max_length=255, verbose_name="Logradouro")
+    numero = models.CharField(max_length=20, default="S/N", verbose_name="Número")
+    bairro = models.CharField(max_length=100, default="Centro", verbose_name="Bairro")
+    municipio = models.CharField(max_length=100, default="São Paulo", verbose_name="Município")
+    uf = models.CharField(max_length=2, default="SP", verbose_name="UF")
     ativo: models.BooleanField = models.BooleanField(default=True, verbose_name="Ativo no Site")
     selo_verificado: models.BooleanField = models.BooleanField(default=False, verbose_name="Selo de Verificação (B2B/Partner)")
 
@@ -164,20 +172,20 @@ class Oferta(models.Model):
 
     def verificar_lote_e_finalizar(self):
         if self.tipo_oferta == 'lote' and self.status == 'ativa' and self.esta_expirada:
-                self.status = 'sucesso'
-                print(f"LOTE SUCESSO: Oferta '{self.titulo}' atingiu o mínimo. Processar capturas e cupons.")
-                
-                # --- INTEGRAÇÃO LOGÍSTICA (PYTHONJET) - MODO MANUAL (EXPEDIÇÃO) ---
-                # A chamada automática foi desativada para dar controle ao expedidor.
-                # O botão "Chamar Motoboy" no Painel de Expedição fará essa chamada.
-                
-                # try:
-                #     import requests ... (Lógica movida para View de Expedição)
-                
-            else:
-                self.status = 'falha_lote'
-                print(f"LOTE FALHA: Oferta '{self.titulo}' NÃO atingiu o mínimo. Processar estornos.")
-            self.save()
+            self.status = 'sucesso'
+            print(f"LOTE SUCESSO: Oferta '{self.titulo}' atingiu o mínimo. Processar capturas e cupons.")
+            
+            # --- INTEGRAÇÃO LOGÍSTICA (PYTHONJET) - MODO MANUAL (EXPEDIÇÃO) ---
+            # A chamada automática foi desativada para dar controle ao expedidor.
+            # O botão "Chamar Motoboy" no Painel de Expedição fará essa chamada.
+            
+            # try:
+            #     import requests ... (Lógica movida para View de Expedição)
+            
+        else:
+            self.status = 'falha_lote'
+            print(f"LOTE FALHA: Oferta '{self.titulo}' NÃO atingiu o mínimo. Processar estornos.")
+        self.save()
 
     # MÉTODO PARA SEO E NOTIFICAÇÕES (get_absolute_url)
     def get_absolute_url(self) -> str:

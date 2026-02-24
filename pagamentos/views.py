@@ -194,16 +194,15 @@ def notificacao_pagamento_mp(request):
                                                 # ==============================
 
                                                 # === AUTOMAÇÃO FISCAL (NFe) ===
-                                                # ... (código existente da NFe) ...
                                                 try:
                                                     from fiscal.models import NotaFiscal
                                                     from fiscal.services import FiscalService
                                                     if not hasattr(entidade_pagamento, 'nota_fiscal'):
-                                                        nf_obj = NotaFiscal.objects.create(compra=entidade_pagamento, status='pendente')
+                                                        nf_obj = NotaFiscal.objects.create(compra=entidade_pagamento)
                                                         FiscalService().emitir_nfe(nf_obj)
                                                         logger.info(f"NFe AUTO: Disparada para Compra {entidade_pagamento.id}")
                                                 except Exception as e:
-                                                    logger.error(f"NFe AUTO FALHA: {e}")
+                                                    logger.error(f"NFe AUTO FALHA (Compra): {e}")
                                                 # ==============================
 
                                             elif isinstance(entidade_pagamento, PedidoColetivo): 
@@ -218,12 +217,19 @@ def notificacao_pagamento_mp(request):
                                                     oferta.save() 
                                                     logger.info(f"Pedido Coletivo {entidade_pagamento.id}: APROVADO NO MP.")
 
-                                                    # === NOTIFICAÇÃO POR EMAIL (Pedido Coletivo) ===
+                                                    # === AUTOMAÇÃO FISCAL (NFe - Pedido Coletivo) ===
                                                     try:
-                                                        from comunicacao.services import EmailService
-                                                        EmailService.enviar_confirmacao_pedido(entidade_pagamento.usuario, entidade_pagamento, tipo="pedido coletivo")
+                                                        from fiscal.models import NotaFiscal
+                                                        from fiscal.services import FiscalService
+                                                        if not hasattr(entidade_pagamento, 'nota_fiscal'):
+                                                            nf_obj = NotaFiscal.objects.create(pedido_coletivo=entidade_pagamento)
+                                                            # Nota: Em lotes, a emissão poderia ser agendada para o fim do lote,
+                                                            # mas para garantir a "Blindagem Fiscal" (receber dinheiro = emitir nota),
+                                                            # disparamos na aprovação do pagamento.
+                                                            FiscalService().emitir_nfe(nf_obj)
+                                                            logger.info(f"NFe AUTO: Disparada para Pedido Coletivo {entidade_pagamento.id}")
                                                     except Exception as e:
-                                                        logger.error(f"EMAIL ERROR: {e}")
+                                                        logger.error(f"NFe AUTO FALHA (PedidoColetivo): {e}")
                                                     # ==============================
 
                                 elif payment_status == 'pending':

@@ -3,80 +3,197 @@
 
 {% block titulo_pagina %}{{ titulo_pagina }}{% endblock titulo_pagina %}
 
-{% block conteudo %}
-    <h1 class="my-4 text-center">{{ titulo_pagina }}</h1>
+{% block extras_css %}
+<style>
+    .dashboard-card {
+        background: #fff;
+        border-radius: 8px;
+        padding: 24px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e5e5e5;
+        height: 100%;
+    }
 
-    <div class="row">
-        <div class="col-md-3">
-            <div class="list-group">
-                <a href="{% url 'vendedores_painel:dashboard' %}" class="list-group-item list-group-item-action active" aria-current="true">
-                    Visão Geral
-                </a>
-                <a href="{% url 'vendedores_painel:criar_oferta' %}" class="list-group-item list-group-item-action">Criar Nova Oferta</a> {# NOVO BOTÃO #}
-                <a href="#" class="list-group-item list-group-item-action disabled">Gerenciar Cupons (Em breve)</a>
-                <a href="#" class="list-group-item list-group-item-action disabled">Relatórios (Em breve)</a>
-            </div>
+    .stat-value {
+        font-size: 28px;
+        font-weight: 600;
+        color: var(--ml-dark);
+        margin-bottom: 4px;
+    }
+
+    .stat-label {
+        color: var(--ml-gray);
+        font-size: 14px;
+    }
+
+    .quick-action-btn {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 16px;
+        border-radius: 8px;
+        text-decoration: none;
+        color: var(--ml-dark);
+        background: #fff;
+        border: 1px solid #e5e5e5;
+        transition: all 0.2s;
+        margin-bottom: 12px;
+    }
+
+    .quick-action-btn:hover {
+        background: #f8f8f8;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        color: var(--ml-blue);
+    }
+
+    .quick-action-btn i {
+        font-size: 24px;
+        color: var(--ml-blue);
+    }
+
+    .aura-badge {
+        background: linear-gradient(135deg, #6e8efb, #a777e3);
+        color: #fff;
+        font-size: 10px;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-weight: bold;
+    }
+</style>
+{% endblock %}
+
+{% block conteudo %}
+<div class="row mb-5">
+    <div class="col-12">
+        <h2 class="mb-4 fw-bold">Olá, {{ vendedor.nome_empresa }} 👋</h2>
+    </div>
+
+    {# Estatísticas de Performance #}
+    <div class="col-md-3 mb-4">
+        <div class="dashboard-card">
+            <div class="stat-value">R$ {{ receita_bruta|floatformat:2 }}</div>
+            <div class="stat-label">Receita Estimada</div>
         </div>
-        <div class="col-md-9">
-            <div class="card shadow-sm mb-4">
-                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                    <h4 class="mb-0">Minhas Ofertas Cadastradas</h4>
-                    <a href="{% url 'vendedores_painel:criar_oferta' %}" class="btn btn-success btn-sm">Adicionar Nova Oferta</a> {# Botão no cabeçalho #}
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="dashboard-card">
+            <div class="stat-value">{{ total_cupons_vendidos }}</div>
+            <div class="stat-label">Vendas Realizadas</div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="dashboard-card">
+            <div class="stat-value text-success">{{ total_cupons_resgatados }}</div>
+            <div class="stat-label">Cupons Resgatados</div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="dashboard-card">
+            <div class="stat-value text-primary">{{ ofertas.count }}</div>
+            <div class="stat-label">Minhas Ofertas</div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    {# Ações Rápidas #}
+    <div class="col-lg-4">
+        <h5 class="mb-3 fw-bold">Ações Rápidas</h5>
+        <a href="{% url 'vendedores_painel:nova_oferta_ia' %}" class="quick-action-btn">
+            <i class="bi bi-magic"></i>
+            <div>
+                <div class="fw-bold">Aura-Scanner <span class="aura-badge">NOVO</span></div>
+                <div class="small text-muted">Cadastre ofertas via foto em segundos</div>
+            </div>
+        </a>
+        <a href="{% url 'vendedores_painel:criar_oferta' %}" class="quick-action-btn">
+            <i class="bi bi-plus-circle"></i>
+            <div>
+                <div class="fw-bold">Nova Oferta Comum</div>
+                <div class="small text-muted">Cadastro manual detalhado</div>
+            </div>
+        </a>
+        <a href="{% url 'vendedores_painel:buscar_cupom' %}" class="quick-action-btn">
+            <i class="bi bi-qr-code-scan"></i>
+            <div>
+                <div class="fw-bold">Resgatar Cupom</div>
+                <div class="small text-muted">Valide cupons de clientes</div>
+            </div>
+        </a>
+        <a href="{% url 'vendedores_painel:expedition_list' %}" class="quick-action-btn">
+            <i class="bi bi-truck"></i>
+            <div>
+                <div class="fw-bold">Expedição & Logística</div>
+                <div class="small text-muted">Despache lotes concretizados</div>
+            </div>
+        </a>
+    </div>
+
+    {# Lista de Ofertas #}
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm" style="border-radius: 8px;">
+            <div class="card-header bg-white border-bottom py-3">
+                <h5 class="mb-0 fw-bold">Gerenciamento de Ofertas</h5>
+            </div>
+            <div class="card-body p-0">
+                {% if ofertas %}
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="ps-4">Produto</th>
+                                <th>Preço</th>
+                                <th>Vendas</th>
+                                <th>Status</th>
+                                <th class="text-end pe-4">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for oferta in ofertas %}
+                            <tr>
+                                <td class="ps-4">
+                                    <div class="fw-bold text-dark">{{ oferta.titulo }}</div>
+                                    <div class="small text-muted">{{ oferta.get_tipo_oferta_display }}</div>
+                                </td>
+                                <td>R$ {{ oferta.preco_desconto|floatformat:2 }}</td>
+                                <td>
+                                    <div class="small fw-bold">{{ oferta.quantidade_vendida }} un.</div>
+                                </td>
+                                <td>
+                                    {% if oferta.status == 'ativa' and oferta.publicada %}
+                                    <span
+                                        class="badge bg-success-subtle text-success border border-success-subtle">Online</span>
+                                    {% elif oferta.status == 'pendente' %}
+                                    <span class="badge bg-warning-subtle text-warning border border-warning-subtle">Em
+                                        Análise</span>
+                                    {% else %}
+                                    <span
+                                        class="badge bg-secondary-subtle text-secondary border border-secondary-subtle">{{
+                                        oferta.get_status_display }}</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-end pe-4">
+                                    <a href="{% url 'ofertas:detalhe_oferta' slug_oferta=oferta.slug %}"
+                                        class="btn btn-outline-primary btn-sm rounded-pill px-3">Ver</a>
+                                    <a href="{% url 'vendedores_painel:editar_oferta' pk=oferta.pk %}"
+                                        class="btn btn-light btn-sm rounded-pill px-3">Editar</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
-                <div class="card-body">
-                    {% if ofertas %}
-                        <div class="table-responsive">
-                            <table class="table table-striped table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Título</th>
-                                        <th>Preço Desc.</th>
-                                        <th>Vendidos</th>
-                                        <th>Status</th>
-                                        <th>Publicada</th>
-                                        <th>Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for oferta in ofertas %}
-                                        <tr>
-                                            <td>{{ oferta.titulo }}</td>
-                                            <td>R$ {{ oferta.preco_desconto|floatformat:2 }}</td>
-                                            <td>{{ oferta.quantidade_vendida }}</td>
-                                            <td>
-                                                {% if oferta.status == 'pendente' %}
-                                                    <span class="badge bg-secondary">{{ oferta.get_status_display }}</span>
-                                                {% elif oferta.status == 'ativa' %}
-                                                    <span class="badge bg-success">{{ oferta.get_status_display }}</span>
-                                                {% elif oferta.status == 'expirada' %}
-                                                    <span class="badge bg-danger">{{ oferta.get_status_display }}</span>
-                                                {% else %}
-                                                    <span class="badge bg-info">{{ oferta.get_status_display }}</span>
-                                                {% endif %}
-                                            </td>
-                                            <td>
-                                                {% if oferta.publicada %}
-                                                    <span class="badge bg-success">Sim</span>
-                                                {% else %}
-                                                    <span class="badge bg-danger">Não</span>
-                                                {% endif %}
-                                            </td>
-                                            <td>
-                                                <a href="{% url 'ofertas:detalhe_oferta' slug_oferta=oferta.slug %}" class="btn btn-info btn-sm me-1" title="Ver Detalhes"><i class="bi bi-eye"></i> Ver</a>
-                                                <a href="{% url 'vendedores_painel:editar_oferta' pk=oferta.pk %}" class="btn btn-warning btn-sm" title="Editar Oferta"><i class="bi bi-pencil"></i> Editar</a> {# NOVO BOTÃO #}
-                                            </td>
-                                        </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                    {% else %}
-                        <div class="alert alert-info text-center" role="alert">
-                            Você ainda não tem ofertas cadastradas. <a href="{% url 'vendedores_painel:criar_oferta' %}" class="alert-link">Clique aqui para criar uma!</a>
-                        </div>
-                    {% endif %}
+                {% else %}
+                <div class="p-5 text-center">
+                    <i class="bi bi-box-seam display-4 text-muted mb-3 d-block"></i>
+                    <p class="text-muted">Nenhuma oferta cadastrada ainda.</p>
+                    <a href="{% url 'vendedores_painel:nova_oferta_ia' %}" class="btn btn-primary rounded-pill">Começar
+                        agora com IA</a>
                 </div>
+                {% endif %}
             </div>
         </div>
     </div>
+</div>
 {% endblock conteudo %}
