@@ -1,0 +1,1 @@
+Invalid block tag on line 12: 'endblock', expected 'endblock' or 'endblock titulo_pagina'. Did you forget to register or load this tag?
